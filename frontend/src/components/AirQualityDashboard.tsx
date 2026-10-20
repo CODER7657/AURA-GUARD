@@ -269,7 +269,7 @@ export const AirQualityDashboard: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-gray-800 mb-2">Air Quality Monitor</h1>
-            <p className="text-gray-600">NASA TEMPO Enhanced LSTM Predictions • Real-time data and 7-day forecasts</p>
+            <p className="text-gray-600">Current readings from EPA AirNow • Forecasts are simulated until a trained model is deployed</p>
             {error && (
               <div className="mt-2 text-red-600 text-sm">
                 API Error: Using fallback data. {error}
@@ -505,18 +505,18 @@ export const AirQualityDashboard: React.FC = () => {
                 </div>
                 
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Model Accuracy</span>
-                  <span className="text-green-600 font-medium">86.98%</span>
+                  <span className="text-gray-600">Backtest error, 6 h ahead</span>
+                  <span className="text-green-600 font-medium">3.69 ppb NO₂</span>
                 </div>
-                
+
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Inference Time</span>
-                  <span className="text-blue-600 font-medium">1.7ms</span>
+                  <span className="text-gray-600">Forecasts</span>
+                  <span className="text-amber-600 font-medium">Simulated</span>
                 </div>
-                
+
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Data Source</span>
-                  <span className="text-purple-600 font-medium">TEMPO Satellite</span>
+                  <span className="text-purple-600 font-medium">EPA AirNow (API key required)</span>
                 </div>
               </div>
             </div>

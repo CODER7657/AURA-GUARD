@@ -7,7 +7,7 @@ const NASATempoAIService = require('../services/ai/NASATempoAIService');
 // Initialize NASA TEMPO AI Service
 const aiService = new NASATempoAIService();
 
-// Real-time air quality prediction using NASA TEMPO Enhanced LSTM
+// Real-time air quality prediction (simulated until a trained model is deployed)
 router.post('/realtime', asyncHandler(async (req, res) => {
   const { latitude, longitude, forecast_hours = 1 } = req.body;
   
@@ -65,32 +65,9 @@ router.post('/forecast', asyncHandler(async (req, res) => {
   }
 }));
 
-// Model accuracy metrics
+// Measured model performance from the walk-forward backtest (ml/results/model_performance.json)
 router.get('/accuracy', asyncHandler(async (req, res) => {
-  const performance = {
-    model_performance: {
-      r2_score: 0.8698,
-      mae: 0.8784,
-      rmse: 1.1480,
-      inference_time_ms: 1.7,
-      architecture: 'Enhanced LSTM 25612864',
-      parameters: 529217
-    },
-    nasa_compliance: {
-      accuracy_target: 0.90,
-      current_accuracy: 0.8698,
-      gap: 0.0302,
-      compliance_percentage: 96.6,
-      status: 'Excellent - Approaching Target'
-    },
-    benchmarks: {
-      error_tolerance: 'PASSED (0.88 < 5.0 �g/m)',
-      latency_requirement: 'PASSED (1.7 < 100 ms)',
-      accuracy_requirement: 'CLOSE (86.98% approaching 90%)'
-    }
-  };
-  
-  return successResponse(res, performance, 'Model performance metrics retrieved successfully');
+  return successResponse(res, aiService.getModelPerformance(), 'Backtested model performance retrieved successfully');
 }));
 
 // AI Service health check

@@ -45,10 +45,10 @@ export const NASATempoPredictor: React.FC = () => {
     <div className="max-w-6xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg">
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          🛰️ NASA TEMPO Enhanced LSTM Air Quality Predictor
+          🛰️ Air Quality Predictor
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Real-time air quality predictions using NASA satellite data and Enhanced LSTM neural networks
+          Current readings from EPA AirNow. Forecasts are simulated until a trained model is deployed.
         </p>
       </div>
 
@@ -203,23 +203,23 @@ export const NASATempoPredictor: React.FC = () => {
             transition={{ delay: 0.4 }}
           >
             <h3 className="text-lg font-bold mb-4 text-blue-900 dark:text-blue-100">
-              🧠 Model Performance
+              🧠 Model Performance (backtested on EPA data)
             </h3>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span>R² Score:</span>
-                <span className="font-semibold">{modelPerformance.model_performance.r2_score}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Inference Time:</span>
-                <span className="font-semibold">{modelPerformance.model_performance.inference_time_ms.toFixed(1)}ms</span>
-              </div>
-              <div className="flex justify-between">
-                <span>NASA Compliance:</span>
-                <span className="font-semibold text-green-600">
-                  {modelPerformance.nasa_compliance.compliance_percentage.toFixed(1)}%
-                </span>
-              </div>
+              {['1', '6', '24'].map((h) => {
+                const score = modelPerformance.horizons?.[h];
+                return score ? (
+                  <div key={h} className="flex justify-between">
+                    <span>{h} h ahead, error:</span>
+                    <span className="font-semibold">
+                      {score.mae_ppb.toFixed(2)} ppb ({(score.skill_vs_persistence * 100).toFixed(0)}% better than persistence)
+                    </span>
+                  </div>
+                ) : null;
+              })}
+              <p className="pt-2 text-xs text-amber-700 dark:text-amber-300">
+                Live forecasts shown here are {modelPerformance.live_forecasts}.
+              </p>
             </div>
           </motion.div>
         )}

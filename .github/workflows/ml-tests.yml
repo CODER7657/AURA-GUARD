@@ -1,0 +1,31 @@
+name: ml-tests
+
+on:
+  push:
+    branches: [master]
+    paths: ["ml/**", ".github/workflows/ml-tests.yml"]
+  pull_request:
+    paths: ["ml/**", ".github/workflows/ml-tests.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ml
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      # The tests build small synthetic series: no EPA download, no GPU.
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
