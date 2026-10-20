@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
 """
-NASA TEMPO Enhanced LSTM Model Bridge
-Production-ready bridge for Node.js backend integration
+Prediction bridge between the Node.js backend and Python.
 
-This script provides a robust interface between the Node.js backend and the
-Enhanced LSTM model, handling edge cases and error conditions.
-
-Model Performance:
-- R² Score: 0.8698 (86.98% accuracy)
-- MAE: 0.8784
-- RMSE: 1.1480
-- Inference Time: 1.7ms average
-- Architecture: Enhanced LSTM 256→128→64
+The forecasts this script returns are SIMULATED: no trained model is deployed, and
+every response says so (`metadata.simulated`). Measured model performance is read
+from ml/results/model_performance.json, which the walk-forward backtest on real
+EPA data produces; see ml/README.md.
 """
 
+import os
 import sys
 import json
 import numpy as np
@@ -51,20 +46,27 @@ MAX_ATMOSPHERIC_VALUES = {
     'wind_speed': 100,  # m/s
 }
 
+PERFORMANCE_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), '..', '..', 'ml', 'results', 'model_performance.json'
+)
+
+
+def load_measured_performance():
+    """Backtest results, or an explicit 'not measured' if the file is missing."""
+    try:
+        with open(PERFORMANCE_FILE, encoding='utf-8') as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {'status': 'no backtest results found', 'horizons': {}}
+
+
 class NASATempoBridge:
-    """Enhanced LSTM Model Bridge with comprehensive error handling"""
-    
+    """Returns simulated forecasts until a trained model is deployed."""
+
     def __init__(self):
         self.model = None
         self.model_loaded = False
-        self.model_performance = {
-            'r2_score': 0.8698,
-            'mae': 0.8784,
-            'rmse': 1.1480,
-            'inference_time_ms': 1.70,
-            'architecture': 'Enhanced LSTM 256→128→64',
-            'parameters': 529217
-        }
+        self.model_performance = load_measured_performance()
         
         # Initialize model if TensorFlow is available
         if TENSORFLOW_AVAILABLE:
@@ -74,11 +76,11 @@ class NASATempoBridge:
                 self.log_error(f"Model initialization failed: {str(e)}")
     
     def load_model(self):
-        """Load the Enhanced LSTM model with error handling"""
+        """Load a trained model if one is deployed (none is yet)"""
         try:
             self.model = EnhancedLSTMModel()
             self.model_loaded = True
-            self.log_info("Enhanced LSTM model loaded successfully")
+            self.log_info("Model loaded")
         except Exception as e:
             self.model_loaded = False
             self.log_error(f"Failed to load model: {str(e)}")
@@ -299,9 +301,10 @@ class NASATempoBridge:
             "forecast_hours": forecast_hours,
             "predictions": predictions,
             "metadata": {
-                "model_version": "Enhanced LSTM v1.0",
+                "model_version": "simulation (no trained model deployed)",
+                "simulated": True,
                 "model_performance": self.model_performance,
-                "data_sources": ["NASA TEMPO", "Synthetic Weather Data"],
+                "data_sources": ["Synthetic atmospheric data"],
                 "atmospheric_conditions": atmospheric_data
             }
         }
@@ -324,8 +327,8 @@ class NASATempoBridge:
         return {
             "success": True,
             "data": {
-                "model_name": "NASA TEMPO Enhanced LSTM",
-                "version": "1.0",
+                "model_name": "Simulated forecaster (no trained model deployed)",
+                "version": "0.0",
                 "performance": self.model_performance,
                 "status": "active" if self.model_loaded else "mock_mode",
                 "tensorflow_available": TENSORFLOW_AVAILABLE,

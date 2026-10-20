@@ -29,9 +29,9 @@
 ┌───────▼─────┐ ┌─────▼─────┐ ┌─────▼──────────────────────────────┐
 │  PostgreSQL │ │   Redis   │ │      AI/ML PROCESSING LAYER       │
 │  (Supabase) │ │   Cache   │ ├────────────────────────────────────┤
-│             │ │           │ │ Python + TensorFlow + Scikit-learn │
-└─────────────┘ └───────────┘ │    NASA TEMPO Enhanced LSTM       │
-                              │        (R²=0.8698, 1.7ms)         │
+│             │ │           │ │      Python + Scikit-learn        │
+└─────────────┘ └───────────┘ │  NO2 forecaster, backtested on    │
+                              │  EPA data (see ml/README.md)      │
                               └────────────────────────────────────┘
 ```
 
@@ -158,19 +158,16 @@
 - **Pandas** `^2.1.0` - Data manipulation and analysis
 - **Scikit-learn** `^1.3.0` - Machine learning library
 
-### **Model Architecture**
-- **LSTM (Long Short-Term Memory)** - Core neural network architecture
-- **Enhanced LSTM Architecture**: 256 → 128 → 64 neurons
-- **Multi-head Attention Mechanisms** - Advanced neural attention
-- **Ensemble Methods** - Model combination techniques
+### **Model**
+- **Gradient boosting** (scikit-learn `HistGradientBoostingRegressor`), one model per forecast horizon
+- **Baselines** it is measured against: persistence, same hour yesterday, climatology, ridge regression
+- **Status**: backtested on real EPA data; the API still serves simulated forecasts
 
-### **Model Performance**
-- **R² Score**: 0.8698 (86.98% accuracy)
-- **Mean Absolute Error**: 0.8784 μg/m³
-- **Root Mean Square Error**: 1.1480 μg/m³
-- **Inference Time**: 1.7ms per prediction
-- **Parameters**: 529,217 trainable parameters
-- **Architecture ID**: Enhanced LSTM 25612864
+### **Model Performance** (walk-forward backtest, EPA hourly NO2, 20 US monitors, Jul–Dec 2024)
+- **1 h ahead**: MAE 1.85 ppb, 7% better than persistence
+- **6 h ahead**: MAE 3.69 ppb, 30% better than persistence
+- **24 h ahead**: MAE 4.32 ppb, 11% better than persistence
+- Full results: `ml/results/backtest_summary.json`
 
 ### **Advanced Features**
 - **Batch Normalization** - Training stability
@@ -449,11 +446,8 @@ npm run build        # Babel compilation
 ## 🏆 **Performance Metrics**
 
 ### **Model Performance**
-- **Prediction Accuracy**: 86.98% (R² = 0.8698)
-- **NASA Compliance**: 96.6% (approaching 90% target)
-- **Inference Speed**: 1.7ms per prediction
-- **Error Tolerance**: PASSED (<5.0 μg/m³)
-- **Latency Requirement**: PASSED (<100ms)
+- **Forecast error**: see the Model Performance section above and `ml/README.md`
+- **Prediction time**: about 0.05 ms per forecast (measured on Colab, batch prediction)
 
 ### **System Performance**
 - **API Response Time**: <200ms average

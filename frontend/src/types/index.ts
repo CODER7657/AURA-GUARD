@@ -18,7 +18,7 @@ export interface User {
   avatar?: string;
 }
 
-// NASA TEMPO Enhanced LSTM Air Quality Data Interface
+// Air quality prediction response
 export interface AirQualityData {
   location: {
     latitude: number;
@@ -40,20 +40,14 @@ export interface AirQualityData {
     alert_level: string;
   };
   model_performance: {
-    accuracy: number;
-    mae: number;
-    inference_time_ms: number;
+    live_forecasts: string;
+    backtest_1h: HorizonScore | null;
   };
   satellite_data: {
     source: string;
     parameters: any[];
     quality_score: number;
     fallback_mode: boolean;
-  };
-  nasa_compliance: {
-    accuracy_target: number;
-    current_accuracy: number;
-    compliance_status: string;
   };
   predictions: Array<{
     timestamp: string;
@@ -97,28 +91,26 @@ export interface AirQualityForecast {
   confidence: number;
 }
 
-// NASA TEMPO Model Performance Interface
+// Scores for one forecast horizon from the walk-forward backtest on EPA data
+export interface HorizonScore {
+  mae_ppb: number;
+  rmse_ppb: number;
+  r2: number;
+  skill_vs_persistence: number;
+  persistence_mae_ppb: number;
+  interval90_coverage: number;
+}
+
+// Shape of ml/results/model_performance.json, served by GET /predictions/accuracy
 export interface ModelPerformance {
-  model_performance: {
-    r2_score: number;
-    mae: number;
-    rmse: number;
-    inference_time_ms: number;
-    architecture: string;
-    parameters: number;
-  };
-  nasa_compliance: {
-    accuracy_target: number;
-    current_accuracy: number;
-    gap: number;
-    compliance_percentage: number;
-    status: string;
-  };
-  benchmarks: {
-    error_tolerance: string;
-    latency_requirement: string;
-    accuracy_requirement: string;
-  };
+  status: string;
+  live_forecasts: string;
+  model?: string;
+  target?: string;
+  data?: string;
+  evaluation?: string;
+  horizons: Record<string, HorizonScore>;
+  predict_ms_per_row?: number;
 }
 
 // System Health Interface

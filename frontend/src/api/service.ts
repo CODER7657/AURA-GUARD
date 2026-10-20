@@ -2,7 +2,7 @@ import apiClient from './config';
 import type { ApiResponse, AirQualityData, User } from '../types';
 
 export class ApiService {
-  // NASA TEMPO Enhanced LSTM Air Quality API methods
+  // Air quality API methods
   static async getRealTimePrediction(coordinates: { latitude: number; longitude: number; forecast_hours?: number }): Promise<AirQualityData> {
     try {
       const response = await apiClient.post<ApiResponse<AirQualityData>>('/predictions/realtime', coordinates);

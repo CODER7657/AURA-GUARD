@@ -435,3 +435,5 @@ site/
 # ==============================================================================
 # END OF GITIGNORE
 # ==============================================================================
+# Measured forecasting results are part of the repo (the backend serves them)
+!ml/results/*.json

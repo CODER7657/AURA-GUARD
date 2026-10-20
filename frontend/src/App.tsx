@@ -19,7 +19,7 @@ function App() {
         <HeroSection />
         <TrustedCompaniesSection />
         <FeaturesSection />
-        {/* NASA TEMPO Enhanced LSTM Predictor */}
+        {/* Air quality predictor */}
         <section className="py-12 bg-gray-50 dark:bg-gray-900">
           <NASATempoPredictor />
         </section>

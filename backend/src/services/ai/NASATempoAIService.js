@@ -1,14 +1,27 @@
 /**
- * NASA TEMPO Enhanced LSTM Air Quality Prediction Service
- * Integrated with Enhanced LSTM Model (R²=0.8698)
- * 
- * This service bridges the Python LSTM model with the Node.js backend,
- * providing real-time air quality predictions using NASA TEMPO satellite data.
+ * Air quality prediction service.
+ *
+ * Model performance comes from ml/results/model_performance.json, written by the
+ * walk-forward backtest on real EPA data (see ml/README.md). Forecasts returned by
+ * this service are still simulated: no trained model is deployed yet, and every
+ * response says so in `model_performance.live_forecasts`.
  */
 
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs').promises;
+const { readFileSync } = require('fs');
+
+const PERFORMANCE_FILE = path.join(__dirname, '../../../../ml/results/model_performance.json');
+
+function loadMeasuredPerformance() {
+  try {
+    return JSON.parse(readFileSync(PERFORMANCE_FILE, 'utf8'));
+  } catch (error) {
+    // Report nothing rather than a number that was never measured.
+    return { status: 'no backtest results found', live_forecasts: 'simulated', horizons: {} };
+  }
+}
 const logger = require('../../utils/logger');
 const { setCache, getCache } = require('../../config/redis');
 const tempoService = require('../TempoService'); // Import as instance, not constructor
@@ -18,14 +31,7 @@ class NASATempoAIService {
   constructor() {
     this.modelPath = path.join(__dirname, '../../../ai-int/models');
     this.pythonPath = 'python3'; // Try python3 first, then fallback to python
-    this.modelPerformance = {
-      r2_score: 0.8698,
-      mae: 0.8784,
-      rmse: 1.1480,
-      inference_time_ms: 1.70,
-      architecture: 'Enhanced LSTM 256→128→64',
-      parameters: 529217
-    };
+    this.modelPerformance = loadMeasuredPerformance();
     this.tempoService = tempoService; // Use the imported instance
     
     logger.info('NASA TEMPO AI Service initialized', {
@@ -36,7 +42,7 @@ class NASATempoAIService {
   }
 
   /**
-   * Get real-time air quality prediction using Enhanced LSTM model
+   * Get a real-time air quality prediction (simulated until a model is deployed)
    * @param {number} latitude - Latitude coordinate
    * @param {number} longitude - Longitude coordinate
    * @param {number} forecastHours - Hours ahead to predict (default: 24)
@@ -96,20 +102,14 @@ class NASATempoAIService {
           alert_level: this.determineAlertLevel(prediction.aqi)
         },
         model_performance: {
-          accuracy: this.modelPerformance.r2_score,
-          mae: this.modelPerformance.mae,
-          inference_time_ms: prediction.inference_time || this.modelPerformance.inference_time_ms
+          live_forecasts: this.modelPerformance.live_forecasts,
+          backtest_1h: this.modelPerformance.horizons['1'] || null
         },
         satellite_data: {
           source: currentAirQuality?.source || 'real_air_quality_data',
           parameters: ['AQI', 'PM2.5', 'PM10', 'NO2', 'O3'],
           quality_score: 0.98, // High quality for real data
           fallback_mode: false
-        },
-        nasa_compliance: {
-          accuracy_target: 0.90,
-          current_accuracy: this.modelPerformance.r2_score,
-          compliance_status: 'Using Real Data'
         },
         predictions: prediction.predictions // Include full prediction array
       };
@@ -302,7 +302,7 @@ class NASATempoAIService {
   }
 
   /**
-   * Run Enhanced LSTM prediction using Python model bridge
+   * Run the Python prediction bridge (returns simulated forecasts)
    * @param {Object} inputData - Prepared input features
    * @param {number} forecastHours - Prediction horizon
    * @returns {Promise<Object>} LSTM model prediction results
@@ -621,21 +621,7 @@ class NASATempoAIService {
    * @returns {Object} Current model performance statistics
    */
   getModelPerformance() {
-    return {
-      ...this.modelPerformance,
-      status: 'Production Ready',
-      nasa_compliance: {
-        accuracy_target: 0.90,
-        current_accuracy: this.modelPerformance.r2_score,
-        gap: 0.90 - this.modelPerformance.r2_score,
-        compliance_percentage: (this.modelPerformance.r2_score / 0.90) * 100
-      },
-      benchmarks: {
-        error_tolerance: 'PASSED (0.88 < 5.0 μg/m³)',
-        latency_requirement: 'PASSED (1.7 < 100 ms)',
-        accuracy_requirement: 'CLOSE (86.98% approaching 90%)'
-      }
-    };
+    return this.modelPerformance;
   }
 
   /**
