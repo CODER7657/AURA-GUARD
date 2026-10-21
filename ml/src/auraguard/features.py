@@ -33,11 +33,24 @@ def hourly_grid(df: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
-def make_supervised(grid: pd.DataFrame, horizon: int) -> pd.DataFrame:
-    """Features and target for forecasting ``horizon`` hours ahead (1 to 24)."""
+def make_supervised(
+    grid: pd.DataFrame, horizon: int, codes: dict[str, int] | None = None, require_target: bool = True
+) -> pd.DataFrame:
+    """Features and target for forecasting ``horizon`` hours ahead (1 to 24).
+
+    ``codes`` maps station to the integer the model saw in training. Pass the training
+    mapping when building features from a different file, so a station keeps its code
+    even if the set of stations differs. Stations not in ``codes`` are dropped.
+
+    With ``require_target=False`` rows whose target is not observed yet are kept: that
+    is how features for a live forecast from the latest hour are built.
+    """
     if not 1 <= horizon <= 24:
         raise ValueError("horizon must be between 1 and 24 hours")
-    codes = {s: i for i, s in enumerate(sorted(grid["station"].unique()))}
+    if codes is None:
+        codes = {s: i for i, s in enumerate(sorted(grid["station"].unique()))}
+    else:
+        grid = grid[grid["station"].isin(codes)]
     parts = []
     for station, g in grid.groupby("station", sort=True):
         y = g["value"].reset_index(drop=True)
@@ -68,8 +81,8 @@ def make_supervised(grid: pd.DataFrame, horizon: int) -> pd.DataFrame:
         parts.append(out)
 
     table = pd.concat(parts, ignore_index=True)
-    # A forecast needs the current reading and a real target to be scored against.
-    return table.dropna(subset=["y", "lag_0"]).reset_index(drop=True)
+    # A forecast needs the current reading, and a real target when it is to be scored.
+    return table.dropna(subset=["y", "lag_0"] if require_target else ["lag_0"]).reset_index(drop=True)
 
 
 def feature_columns(table: pd.DataFrame) -> list[str]:

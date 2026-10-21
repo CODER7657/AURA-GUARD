@@ -1,0 +1,57 @@
+name: ml-monitor
+
+# Weekly check that the deployed NO2 forecaster still beats persistence on the newest
+# public EPA data. No secrets: the EPA AirData files are public. Fails the run if any
+# threshold in ml/scripts/monitor.py is crossed.
+on:
+  schedule:
+    - cron: "17 6 * * 1" # Mondays 06:17 UTC
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "ml/models/**"
+      - "ml/scripts/monitor.py"
+      - "ml/src/auraguard/serve.py"
+      - "ml/src/auraguard/features.py"
+      - "ml/requirements-monitor.txt"
+      - ".github/workflows/ml-monitor.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ml
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      # The model bundle is a pickle, so it is loaded with the library versions it was saved with.
+      - run: pip install -r requirements-monitor.txt && pip install --no-deps -e .
+      - name: Download the newest EPA AirData hourly NO2 file
+        run: |
+          mkdir -p data
+          y=$(date -u +%Y)
+          for year in "$y" "$((y - 1))"; do
+            f="hourly_42602_${year}.zip"
+            if curl -fsSL --retry 3 -o "data/$f" "https://aqs.epa.gov/aqsweb/airdata/$f"; then
+              echo "EPA_FILE=data/$f" >> "$GITHUB_ENV"
+              echo "using $f"
+              break
+            fi
+          done
+          test -n "$EPA_FILE" || grep -q EPA_FILE "$GITHUB_ENV"
+      - name: Score the deployed model on the last 28 days of each station
+        run: python scripts/monitor.py --data "$EPA_FILE" --days 28 --out monitor_report.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitor-report
+          path: ml/monitor_report.json
+          if-no-files-found: ignore
