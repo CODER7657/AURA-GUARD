@@ -48,7 +48,8 @@ export const NASATempoPredictor: React.FC = () => {
           🛰️ Air Quality Predictor
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Current readings from EPA AirNow. Forecasts are simulated until a trained model is deployed.
+          Current readings from EPA AirNow. The AQI forecast beyond 1 hour is simulated; the NO₂ panel
+          shows real model forecasts for the nearest EPA monitor, issued from the latest EPA data (not live).
         </p>
       </div>
 
@@ -190,6 +191,32 @@ export const NASATempoPredictor: React.FC = () => {
             </div>
           </div>
         </motion.div>
+      )}
+
+      {/* Real NO2 model forecast at the nearest monitor */}
+      {prediction && (
+        <div className="p-6 mb-8 rounded-xl border border-gray-200 dark:border-gray-700">
+          <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">NO₂ model forecast</h3>
+          {prediction.no2_forecast ? (
+            <>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                Station {prediction.no2_forecast.forecast.station} ({prediction.no2_forecast.forecast.place}),{' '}
+                {prediction.no2_forecast.distance_km} km away. Issued {prediction.no2_forecast.forecast.issued_at_utc} UTC
+                from the last reading in the EPA file, not live.
+              </p>
+              <ul className="space-y-1 text-gray-800 dark:text-gray-200">
+                {prediction.no2_forecast.forecast.forecasts.map((f) => (
+                  <li key={f.horizon_h}>
+                    +{f.horizon_h} h ({f.target_time_local} local): <strong>{f.no2_ppb} ppb</strong>, 90% interval{' '}
+                    {f.interval90_low_ppb} to {f.interval90_high_ppb} ppb, {f.aqi_category}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <p className="text-gray-600 dark:text-gray-400">No NO₂ forecast station within 80 km of this point.</p>
+          )}
+        </div>
       )}
 
       {/* Model Performance & System Status */}

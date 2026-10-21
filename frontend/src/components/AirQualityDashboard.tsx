@@ -269,7 +269,7 @@ export const AirQualityDashboard: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-gray-800 mb-2">Air Quality Monitor</h1>
-            <p className="text-gray-600">Current readings from EPA AirNow • Forecasts are simulated until a trained model is deployed</p>
+            <p className="text-gray-600">Current readings from EPA AirNow • AQI forecasts are simulated; real NO₂ model forecasts are in the predictor</p>
             {error && (
               <div className="mt-2 text-red-600 text-sm">
                 API Error: Using fallback data. {error}

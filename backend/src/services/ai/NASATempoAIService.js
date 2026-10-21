@@ -2,9 +2,12 @@
  * Air quality prediction service.
  *
  * Model performance comes from ml/results/model_performance.json, written by the
- * walk-forward backtest on real EPA data (see ml/README.md). Forecasts returned by
- * this service are still simulated: no trained model is deployed yet, and every
- * response says so in `model_performance.live_forecasts`.
+ * walk-forward backtest on real EPA data (see ml/README.md).
+ *
+ * The AQI / PM2.5 forecasts this service returns for more than 1 hour ahead are
+ * SIMULATED (current AirNow reading plus random variation), and each response says so
+ * in `aqi_forecast_simulated`. Real model forecasts exist for NO2 only, at 20 EPA
+ * monitors: see NO2ForecastService and /api/v1/predictions/no2/forecast.
  */
 
 const { spawn } = require('child_process');
@@ -93,6 +96,8 @@ class NASATempoAIService {
         location: { latitude, longitude },
         forecastHours,
         timestamp: new Date().toISOString(),
+        // Beyond 1 hour the AQI below is simulated, not a model forecast.
+        aqi_forecast_simulated: forecastHours > 1,
         prediction: {
           pm25_concentration: prediction.pm25_predicted,
           confidence: prediction.confidence,
