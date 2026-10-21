@@ -152,6 +152,7 @@ class ForecastTools:
         gb, base = self.pooled[(h, "gradient_boosting")], self.pooled[(h, "persistence")]
         out = {
             "horizon_h": h,
+            "model": "gradient boosting (scikit-learn HistGradientBoostingRegressor), one model per horizon",
             "test_period": "July to December 2024, monthly walk-forward, 20 EPA monitors",
             "n_forecasts": gb["n"],
             "mae_ppb": round(gb["mae"], 2),
