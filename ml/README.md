@@ -257,4 +257,4 @@ pytest
 - **No satellite data yet.** NASA TEMPO NO₂ columns are the planned next feature.
 - **The agent's checker is lexical.** It proves that numbers came from tools, not that
   the right number was used for the right station and hour. The eval's string-matched
-  grading is what catches that, and and so far only for the 19 of the 40 questions that have been run.
+  grading is what catches that (32 of 40 graded right).
