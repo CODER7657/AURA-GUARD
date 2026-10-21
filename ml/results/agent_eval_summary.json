@@ -1,0 +1,529 @@
+{
+ "model": "openai/gpt-oss-120b",
+ "questions_commit": "af66b229c700541f274a26daed583bce6955c65b",
+ "questions_sha256": "014d50bb3c8a9023759bc5652028e79589abeeea0755229ecd425b1eb94f1711",
+ "code_commit": "0eb4fdf53635a849b224509c45873ff8d4fc1816",
+ "n_questions": 19,
+ "grounded_before_checker": 0.9473684210526315,
+ "grounded_after_checker": 1.0,
+ "answer_source": {
+  "first": 18,
+  "retry": 1
+ },
+ "correct_behaviour_before": 0.8947368421052632,
+ "correct_behaviour_after": 0.8947368421052632,
+ "correct_refusal_before": null,
+ "correct_refusal_after": null,
+ "false_refusal_after": 0.05263157894736842,
+ "tool_call_accuracy": 1.0,
+ "n_with_expected_calls": 17,
+ "mean_tool_calls": 1.736842105263158,
+ "latency_p50_s": 34.823,
+ "latency_p95_s": 405.541,
+ "latency_excluding_rate_limit_p50_s": 1.968,
+ "latency_excluding_rate_limit_p95_s": 3.528,
+ "api_errors": 0,
+ "usage": {
+  "prompt_tokens": 4619,
+  "completion_tokens": 333,
+  "calls": 5
+ },
+ "per_question": [
+  {
+   "id": "A01",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 405.541,
+   "latency_active_s": 2.191,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A02",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 2,
+   "latency_s": 80.266,
+   "latency_active_s": 2.497,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A03",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 3,
+   "latency_s": 44.115,
+   "latency_active_s": 3.528,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A04",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 3,
+   "latency_s": 33.975,
+   "latency_active_s": 2.2,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A05",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": false,
+    "refused": false,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": false,
+    "refused": false,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 35.724,
+   "latency_active_s": 0.912,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A06",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 1.115,
+   "latency_active_s": 1.115,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A07",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 1.884,
+   "latency_active_s": 1.884,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A08",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 32.352,
+   "latency_active_s": 0.862,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A09",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 1.319,
+   "latency_active_s": 1.319,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A10",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 2,
+   "latency_s": 44.856,
+   "latency_active_s": 2.821,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A11",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "retry",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 33.667,
+   "latency_active_s": 2.08,
+   "error": null,
+   "first_issues": [
+    "numbers not found in any tool output: 2024"
+   ]
+  },
+  {
+   "id": "A12",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 1.589,
+   "latency_active_s": 1.589,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A13",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 2,
+   "latency_s": 34.823,
+   "latency_active_s": 1.796,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "A14",
+   "category": "answerable",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 3,
+   "latency_s": 37.86,
+   "latency_active_s": 1.968,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "B01",
+   "category": "ambiguous",
+   "expect": "clarify_or_answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 3,
+   "latency_s": 42.943,
+   "latency_active_s": 2.799,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "B02",
+   "category": "ambiguous",
+   "expect": "clarify_or_answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 1,
+   "latency_s": 1.416,
+   "latency_active_s": 1.416,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "B03",
+   "category": "ambiguous",
+   "expect": "clarify_or_answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 3,
+   "latency_s": 36.489,
+   "latency_active_s": 2.794,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "B04",
+   "category": "ambiguous",
+   "expect": "clarify_or_answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 2,
+   "latency_s": 2.321,
+   "latency_active_s": 2.321,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "B05",
+   "category": "ambiguous",
+   "expect": "clarify_or_answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 1,
+   "latency_s": 125.815,
+   "latency_active_s": 1.154,
+   "error": null,
+   "first_issues": []
+  }
+ ]
+}
