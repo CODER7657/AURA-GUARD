@@ -165,3 +165,10 @@ def test_grading_rules():
     assert not tool_calls_ok(rec, {"expected_calls": [{"name": "list_stations"}]})
     assert tool_calls_ok(rec, {"expected_calls": []}) is None
     assert percentile([1, 2, 3, 4], 50) == 2 and percentile([1, 2, 3, 4], 95) == 4
+
+
+def test_rate_limit_reset_headers_parse():
+    from auraguard.agent.llm import seconds
+
+    assert seconds("929ms") == 0.929 and seconds("54.9s") == 54.9 and seconds("1m26.4s") == 86.4
+    assert seconds(None) == 0.0

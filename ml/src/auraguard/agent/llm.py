@@ -32,6 +32,24 @@ class LLMError(RuntimeError):
     pass
 
 
+def seconds(value: str | None) -> float:
+    """Groq reset headers look like '929ms', '54.9s' or '1m26.4s'."""
+    if not value:
+        return 0.0
+    total, num = 0.0, ""
+    i = 0
+    while i < len(value):
+        c = value[i]
+        if c.isdigit() or c == ".":
+            num += c
+        elif value.startswith("ms", i):
+            total, num, i = total + float(num or 0) / 1000, "", i + 1
+        elif c in "hms":
+            total, num = total + float(num or 0) * {"h": 3600, "m": 60, "s": 1}[c], ""
+        i += 1
+    return total
+
+
 class ChatClient:
     """``complete(messages, tools)`` returns the assistant message as a dict.
 
@@ -40,10 +58,11 @@ class ChatClient:
     """
 
     def __init__(self, model: str = MODEL, base_url: str = BASE_URL, key: str | None = None,
-                 temperature: float = 0.0, reasoning_effort: str | None = "low", max_retries: int = 6,
-                 timeout: float = 60.0):
+                 temperature: float = 0.0, reasoning_effort: str | None = "low", max_retries: int = 12,
+                 timeout: float = 60.0, min_tokens_left: int = 4000):
         self.model, self.base_url, self.temperature = model, base_url.rstrip("/"), temperature
         self.reasoning_effort, self.max_retries, self.timeout = reasoning_effort, max_retries, timeout
+        self.min_tokens_left = min_tokens_left
         self.key = key or api_key()
         if not self.key:
             raise LLMError("GROQ_API_KEY is not set (environment or ml/.env)")
@@ -66,10 +85,17 @@ class ChatClient:
             try:
                 with urllib.request.urlopen(req, timeout=self.timeout) as r:
                     out = json.loads(r.read().decode("utf-8"))
+                    left = r.headers.get("x-ratelimit-remaining-tokens")
+                    reset = seconds(r.headers.get("x-ratelimit-reset-tokens"))
+                # Pace under a tokens-per-minute limit instead of running into it.
+                if left is not None and int(left) < self.min_tokens_left and reset:
+                    time.sleep(min(reset + 0.5, 65.0))
+                    self.waited_s += min(reset + 0.5, 65.0)
                 break
             except urllib.error.HTTPError as e:
                 detail = e.read().decode("utf-8", "replace")[:300]
-                wait = float(e.headers.get("retry-after") or 0) or min(60.0, 4.0 * 2 ** attempt)
+                wait = max(float(e.headers.get("retry-after") or 0), seconds(e.headers.get("x-ratelimit-reset-tokens")))
+                wait = (wait + 1.0) if wait else min(60.0, 4.0 * 2 ** attempt)
                 if e.code in (429, 500, 502, 503) and attempt < self.max_retries and wait <= 120:
                     time.sleep(wait)
                     self.waited_s += wait
