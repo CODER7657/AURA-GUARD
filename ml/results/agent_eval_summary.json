@@ -3,30 +3,31 @@
  "questions_commit": "af66b229c700541f274a26daed583bce6955c65b",
  "questions_sha256": "014d50bb3c8a9023759bc5652028e79589abeeea0755229ecd425b1eb94f1711",
  "code_commit": "0eb4fdf53635a849b224509c45873ff8d4fc1816",
- "n_questions": 19,
- "grounded_before_checker": 0.9473684210526315,
+ "n_questions": 40,
+ "grounded_before_checker": 0.75,
  "grounded_after_checker": 1.0,
  "answer_source": {
-  "first": 18,
-  "retry": 1
+  "first": 30,
+  "retry": 8,
+  "fallback": 2
  },
- "correct_behaviour_before": 0.8947368421052632,
- "correct_behaviour_after": 0.8947368421052632,
- "correct_refusal_before": null,
- "correct_refusal_after": null,
- "false_refusal_after": 0.05263157894736842,
- "tool_call_accuracy": 1.0,
- "n_with_expected_calls": 17,
- "mean_tool_calls": 1.736842105263158,
- "latency_p50_s": 34.823,
- "latency_p95_s": 405.541,
- "latency_excluding_rate_limit_p50_s": 1.968,
- "latency_excluding_rate_limit_p95_s": 3.528,
+ "correct_behaviour_before": 0.825,
+ "correct_behaviour_after": 0.8,
+ "correct_refusal_before": 0.9166666666666666,
+ "correct_refusal_after": 0.9166666666666666,
+ "false_refusal_after": 0.21428571428571427,
+ "tool_call_accuracy": 0.9130434782608695,
+ "n_with_expected_calls": 23,
+ "mean_tool_calls": 1.375,
+ "latency_p50_s": 32.756,
+ "latency_p95_s": 80.266,
+ "latency_excluding_rate_limit_p50_s": 1.956,
+ "latency_excluding_rate_limit_p95_s": 4.174,
  "api_errors": 0,
  "usage": {
-  "prompt_tokens": 4619,
-  "completion_tokens": 333,
-  "calls": 5
+  "prompt_tokens": 59216,
+  "completion_tokens": 4410,
+  "calls": 52
  },
  "per_question": [
   {
@@ -524,6 +525,572 @@
    "latency_active_s": 1.154,
    "error": null,
    "first_issues": []
+  },
+  {
+   "id": "B06",
+   "category": "ambiguous",
+   "expect": "answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 2,
+   "latency_s": 1.693,
+   "latency_active_s": 1.693,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "B07",
+   "category": "ambiguous",
+   "expect": "clarify_or_answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 2,
+   "latency_s": 43.238,
+   "latency_active_s": 2.703,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "B08",
+   "category": "ambiguous",
+   "expect": "clarify_or_answer",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 2,
+   "latency_s": 34.033,
+   "latency_active_s": 1.973,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "C01",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 0,
+   "latency_s": 0.474,
+   "latency_active_s": 0.474,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "C02",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 0,
+   "latency_s": 0.489,
+   "latency_active_s": 0.489,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "C03",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "retry",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 1,
+   "latency_s": 2.248,
+   "latency_active_s": 2.248,
+   "error": null,
+   "first_issues": [
+    "names Texas, where there is no monitor, though the question did not"
+   ]
+  },
+  {
+   "id": "C04",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "retry",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 0,
+   "latency_s": 34.874,
+   "latency_active_s": 1.427,
+   "error": null,
+   "first_issues": [
+    "numbers not found in any tool output: 20"
+   ]
+  },
+  {
+   "id": "C05",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 0,
+   "latency_s": 0.65,
+   "latency_active_s": 0.65,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "C06",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "retry",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 3,
+   "latency_s": 53.383,
+   "latency_active_s": 5.438,
+   "error": null,
+   "first_issues": [
+    "numbers not found in any tool output: 1, 12, 24, 6, 90 %"
+   ]
+  },
+  {
+   "id": "C07",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 0,
+   "latency_s": 0.753,
+   "latency_active_s": 0.753,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "C08",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "retry",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 1,
+   "latency_s": 34.481,
+   "latency_active_s": 3.494,
+   "error": null,
+   "first_issues": [
+    "names Washington, where there is no monitor, though the question did not"
+   ]
+  },
+  {
+   "id": "C09",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": false,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": false,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 1,
+   "latency_s": 1.169,
+   "latency_active_s": 1.169,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "C10",
+   "category": "out_of_scope",
+   "expect": "refuse",
+   "source": "retry",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 1,
+   "latency_s": 32.756,
+   "latency_active_s": 1.956,
+   "error": null,
+   "first_issues": [
+    "numbers not found in any tool output: 20"
+   ]
+  },
+  {
+   "id": "D01",
+   "category": "wrong_premise",
+   "expect": "correct_premise",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": false,
+   "calls": 1,
+   "latency_s": 1.163,
+   "latency_active_s": 1.163,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "D02",
+   "category": "wrong_premise",
+   "expect": "correct_premise",
+   "source": "retry",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 1,
+   "latency_s": 45.839,
+   "latency_active_s": 3.317,
+   "error": null,
+   "first_issues": [
+    "numbers not found in any tool output: 12, 24"
+   ]
+  },
+  {
+   "id": "D03",
+   "category": "wrong_premise",
+   "expect": "correct_premise",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 0,
+   "latency_s": 0.667,
+   "latency_active_s": 0.667,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "D04",
+   "category": "wrong_premise",
+   "expect": "refuse",
+   "source": "fallback",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 3,
+   "latency_s": 35.303,
+   "latency_active_s": 4.174,
+   "error": null,
+   "first_issues": [
+    "station id 48-201-1039-1 does not exist",
+    "names Texas, where there is no monitor, though the question did not"
+   ]
+  },
+  {
+   "id": "D05",
+   "category": "wrong_premise",
+   "expect": "correct_premise",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": false,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 0.936,
+   "latency_active_s": 0.936,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "D06",
+   "category": "wrong_premise",
+   "expect": "correct_premise",
+   "source": "retry",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": false,
+    "refused": true,
+    "mentions_ok": false,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": false,
+   "calls": 1,
+   "latency_s": 34.116,
+   "latency_active_s": 3.024,
+   "error": null,
+   "first_issues": [
+    "numbers not found in any tool output: 12, 24, 6"
+   ]
+  },
+  {
+   "id": "D07",
+   "category": "wrong_premise",
+   "expect": "correct_premise",
+   "source": "first",
+   "grounded_first": true,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": true,
+   "calls": 1,
+   "latency_s": 4.703,
+   "latency_active_s": 4.703,
+   "error": null,
+   "first_issues": []
+  },
+  {
+   "id": "D08",
+   "category": "wrong_premise",
+   "expect": "refuse",
+   "source": "fallback",
+   "grounded_first": false,
+   "grounded_final": true,
+   "first": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "final": {
+    "correct": true,
+    "refused": true,
+    "mentions_ok": true,
+    "forbidden_ok": true
+   },
+   "tool_calls_ok": null,
+   "calls": 1,
+   "latency_s": 1.966,
+   "latency_active_s": 1.966,
+   "error": null,
+   "first_issues": [
+    "names Colorado, where there is no monitor, though the question did not",
+    "numbers not found in any tool output: 20"
+   ]
   }
  ]
 }
