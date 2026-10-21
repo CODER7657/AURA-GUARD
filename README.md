@@ -76,31 +76,29 @@ refusal for other pollutants, places without a monitor and medical questions. A 
 answer gets one retry with the checker's feedback, then falls back to a template built
 only from tool outputs.
 
-**Agent eval, partial: 19 of 40 questions run.** The 40 questions were committed
-before the agent code (`af66b22`). Groq's free tier allows 200,000 tokens a day, and the
-19 questions already used it, so the run stopped there. Only the answerable (14 of 14)
-and the first 5 of 8 ambiguous questions have been asked. **The wrong-premise (8) and
-out-of-scope (10) questions, which are the ones that test refusals, have not been run,
-so there is no refusal number yet.**
+**Agent eval: 40 pre-registered questions.** The questions and their expected
+behaviour were committed before the agent code (`af66b22`); model `openai/gpt-oss-120b`.
 
-| On the 19 questions run | First draft | Returned answer |
+| Metric | First draft | Returned answer |
 |---|---|---|
-| Every number, station and place traceable to a tool output | 18/19 (95%) | 19/19 (100%) |
-| Expected behaviour (string-matched grading) | 17/19 (89%) | 17/19 (89%) |
-| Right tool called with the right station and horizon | 17/17 | 17/17 |
+| Every number, station and place traceable to a tool output | 30/40 (75%) | **40/40 (100%)** |
+| Expected behaviour (string-matched grading) | 33/40 (82%) | 32/40 (80%) |
+| Correct refusal, of the 12 that should be refused | 11/12 | 11/12 |
+| Refused although answerable | 5/28 | 6/28 |
+| Right tool called with the right station and horizon | 21/23 | |
 
-The checker caught one bad draft (a wrong year in the issue time) and the retry fixed
-it. It did not make any answer more correct, because it only checks grounding, not
-whether the answer is the right one. Two returned answers were graded wrong:
+The checker sent 8 drafts back with feedback and fell back to the template twice, so no
+untraceable number reached a user. It did not make answers more correct: grounding went
+from 75% to 100% while behaviour stayed at about 80%.
 
-- **B05, "Is the air going to be bad near Fargo this week?"** The agent said there are
-  no NO₂ monitors in North Dakota. That is false: it lists four in A11, including one
-  in Cass County, which is Fargo's county. The checker passed it because the sentence
-  contains no number or station id to check.
-- **A05, "What NO2 AQI category is 60 ppb?"** It answered "Moderate" and left out the
-  AQI value (57) that the question's grading expects.
-
-Details and the full table: [`ml/results/agent_eval.md`](ml/results/agent_eval.md).
+**Where it fails.** The most damaging error is a false "there is no monitor here": the
+agent told users there are no NO₂ monitors in North Dakota (Fargo, B05) and Arizona
+(Phoenix, D01), although both are in its own station list. Those sentences contain no
+number or station id, so the checker passes them. Wrong-premise questions are the
+weakest category (4/8): asked "the LSTM reached 86.98% accuracy, right?", it refused
+instead of correcting the claim. Latency is 2.0 s median (p95 4.2 s) of actual work; on
+Groq's free tier, rate-limit waits push it to 33 s. Full report:
+[ml/results/agent_eval.md](ml/results/agent_eval.md).
 
 ## System architecture
 

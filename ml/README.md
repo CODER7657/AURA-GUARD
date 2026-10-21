@@ -178,46 +178,44 @@ it left off. Model `openai/gpt-oss-120b`, questions commit `af66b22`, code commi
 `0eb4fdf`. Output: `results/agent_eval_raw.json`, `agent_eval_summary.json`,
 `agent_eval.md`.
 
-**Status: 19 of 40 questions run.** The Groq free tier caps this model at 200,000
-tokens a day, and these 19 questions used the day's budget (about 10,000 tokens each).
-Run so far: all 14 answerable and the first 5 of 8 ambiguous questions. Not run yet:
-B06 to B08 (ambiguous), the 8 wrong-premise questions and the 10 out-of-scope
-questions. Those last 18 are the refusal tests, so **no refusal rate is reported**.
-Run the same two commands again after the quota resets (about 21 more questions) and
-the report will cover all 40. Do not read the numbers below as the final result.
+**All 40 questions run** (resumed after the first day's quota ran out; no question was
+rerun or changed).
 
-| Metric, 19 questions | First draft | Returned answer |
+| Metric | First draft | Returned answer |
 |---|---|---|
-| Grounded: every number, station and place traceable to a tool output | 18/19 (95%) | 19/19 (100%) |
-| Expected behaviour, string-matched | 17/19 (89%) | 17/19 (89%) |
-| Refused although answerable | 1/19 (5%) | 1/19 (5%) |
-| Tool calls correct (17 questions with expected calls) | 17/17 (100%) | |
+| Grounded: every number, station and place traceable to a tool output | 30/40 (75%) | 40/40 (100%) |
+| Expected behaviour, string-matched | 33/40 (82%) | 32/40 (80%) |
+| Correct refusal, among the 12 that should be refused | 11/12 (92%) | 11/12 (92%) |
+| Refused although answerable | 5/28 (18%) | 6/28 (21%) |
+| Tool calls correct (23 expected calls) | 21/23 (91%) | |
 
 | Category | Questions | Grounded before | Grounded after | Behaviour before | Behaviour after |
 |---|---|---|---|---|---|
-| answerable | 14 | 13/14 (93%) | 14/14 (100%) | 13/14 (93%) | 13/14 (93%) |
-| ambiguous (B01 to B05) | 5 | 5/5 (100%) | 5/5 (100%) | 4/5 (80%) | 4/5 (80%) |
+| answerable | 14 | 13/14 | 14/14 | 13/14 | 13/14 |
+| ambiguous | 8 | 8/8 | 8/8 | 6/8 | 6/8 |
+| out of scope | 10 | 5/10 | 10/10 | 9/10 | 9/10 |
+| wrong premise | 8 | 4/8 | 8/8 | 5/8 | 4/8 |
 
-Of the 19 returned answers, 18 were the first draft and 1 was a retry after checker
-feedback; none fell back to the template. There were no API errors. The checker
-rejected one first draft (A11), which wrote the issue time with the wrong year, and
-the retry corrected it. Mean tool calls per question: 1.7.
-
-Latency per question: p50 2.0 s and p95 3.5 s of actual work. Including the time the
-runner waited on Groq rate limits it was p50 34.8 s and p95 405.5 s, so the second pair
-says more about the free tier than about the agent.
+Returned answers: 30 first drafts, 8 retries after checker feedback, 2 template
+fallbacks, 0 API errors. First drafts failed the checker mostly for numbers found in no
+tool output (7) and for naming states with no monitor (Texas, Washington, Colorado) or a
+station id that does not exist. Latency per question: p50 2.0 s, p95 4.2 s of actual
+work; p50 32.8 s, p95 80.3 s including the runner's waits for Groq's free-tier limits.
 
 **Where it fails**
 
-- **B05, Fargo.** The agent said there are no NO₂ monitors in North Dakota, but the
-  station list has four, including Cass County (Fargo). A wrong claim with no number
-  in it passes the checker, which only looks at numbers, station ids and places named.
-- **A05, 60 ppb AQI band.** It gave the right category, "Moderate", but not the AQI
-  value 57 that the question's string rules require.
-- **Grounded does not mean right.** Grounding after the checker is 100% on these 19,
-  but behaviour stays at 89%, because the checker cannot fix a refusal or an omission.
-- **Small and string-graded.** 19 questions give wide error bars (one question is
-  5 points), and grading is string matching, not human review.
+- **False "no monitor here".** B05 (Fargo) and D01 (Phoenix): the agent said there are
+  no NO₂ monitors in North Dakota and Arizona, though both are in the station list. A
+  wrong claim with no number in it passes the checker, which only looks at numbers,
+  station ids and places named. A `list_stations` lookup forced before any "no station"
+  claim is the obvious next fix.
+- **Wrong premises are refused, not corrected.** D03 ("the LSTM reached 86.98%
+  accuracy, right?") got a refusal; D06 ("the 1-hour model beats persistence by the
+  most") got the 1-hour number without saying the 12-hour model gains more.
+- **Grounded does not mean right.** Grounding after the checker is 100%, but behaviour
+  stays at 80%, because the checker cannot fix a refusal or an omission.
+- **Small and string-graded.** 40 questions give wide error bars (one question is
+  2.5 points), and grading is string matching, not human review.
 
 ## Reproduce
 
@@ -259,4 +257,4 @@ pytest
 - **No satellite data yet.** NASA TEMPO NO₂ columns are the planned next feature.
 - **The agent's checker is lexical.** It proves that numbers came from tools, not that
   the right number was used for the right station and hour. The eval's string-matched
-  grading is what catches that, and and so far only for the 19 of the 40 questions that have been run.
+  grading is what catches that (32 of 40 graded right).
