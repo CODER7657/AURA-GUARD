@@ -3,11 +3,60 @@ const router = express.Router();
 const logger = require('../utils/logger');
 const { successResponse, errorResponse, asyncHandler } = require('../utils/helpers');
 const NASATempoAIService = require('../services/ai/NASATempoAIService');
+const { NO2ForecastService } = require('../services/ai/NO2ForecastService');
+const { askAnalyst } = require('../services/ai/ForecastAnalystService');
 
 // Initialize NASA TEMPO AI Service
 const aiService = new NASATempoAIService();
+const no2Forecasts = new NO2ForecastService();
 
-// Real-time air quality prediction (simulated until a trained model is deployed)
+// Real NO2 model forecasts (ml/results/forecasts.json): issued from the last hour in the
+// newest EPA AirData file, so real model output but not live.
+router.get('/no2/stations', asyncHandler(async (req, res) => successResponse(
+  res, no2Forecasts.listStations(), 'NO2 forecast stations retrieved successfully',
+)));
+
+router.get('/no2/forecast', asyncHandler(async (req, res) => {
+  const { station } = req.query;
+  if (station) {
+    const result = no2Forecasts.getStation(station);
+    if (!result) return errorResponse(res, `No NO2 forecast for station ${station}`, 404);
+    return successResponse(res, result, 'NO2 forecast retrieved successfully');
+  }
+  const latitude = parseFloat(req.query.latitude);
+  const longitude = parseFloat(req.query.longitude);
+  if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+    return errorResponse(res, 'Give a station id, or latitude and longitude', 400);
+  }
+  const result = no2Forecasts.nearest(latitude, longitude);
+  if (!result) return errorResponse(res, 'No NO2 forecast station within 80 km of that point', 404);
+  return successResponse(res, result, 'NO2 forecast for the nearest station retrieved successfully');
+}));
+
+// Forecast analyst: an LLM that answers only through forecast tools, with a
+// deterministic grounding check on every answer (ml/src/auraguard/agent).
+router.post('/ask', asyncHandler(async (req, res) => {
+  const question = typeof req.body.question === 'string' ? req.body.question.trim() : '';
+  if (!question || question.length > 500) {
+    return errorResponse(res, 'question must be a string of 1 to 500 characters', 400);
+  }
+  try {
+    const result = await askAnalyst(question);
+    return successResponse(res, {
+      answer: result.answer,
+      source: result.source,
+      grounded: result.grounded,
+      tool_calls: result.tool_calls.filter((t) => t.by !== 'fallback').map((t) => ({ name: t.name, args: t.args })),
+      latency_s: result.latency_s,
+    }, 'Forecast analyst answered');
+  } catch (error) {
+    logger.error('Forecast analyst error:', error);
+    return errorResponse(res, 'The forecast analyst is unavailable', 503);
+  }
+}));
+
+// Current AirNow reading plus an AQI forecast that is still SIMULATED; the response also
+// carries the real NO2 model forecast for the nearest station, when one is within 80 km.
 router.post('/realtime', asyncHandler(async (req, res) => {
   const { latitude, longitude, forecast_hours = 1 } = req.body;
   
@@ -20,7 +69,8 @@ router.post('/realtime', asyncHandler(async (req, res) => {
   try {
     // Use the actual NASA TEMPO AI Service
     const prediction = await aiService.getPrediction(latitude, longitude, forecast_hours);
-    
+    prediction.no2_forecast = no2Forecasts.nearest(latitude, longitude);
+
     return successResponse(res, prediction, 'Real-time air quality prediction generated successfully');
   } catch (error) {
     logger.error('Real-time prediction error:', error);
@@ -34,7 +84,7 @@ router.post('/realtime', asyncHandler(async (req, res) => {
   }
 }));
 
-// Extended forecast
+// Extended forecast (SIMULATED: built from the current reading with random variation)
 router.post('/forecast', asyncHandler(async (req, res) => {
   const { latitude, longitude, duration = 48 } = req.body;
   
@@ -74,14 +124,14 @@ router.get('/accuracy', asyncHandler(async (req, res) => {
 router.get('/health', asyncHandler(async (req, res) => {
   const healthStatus = {
     status: 'healthy',
-    model_available: true,
-    python_bridge: 'operational',
     timestamp: new Date().toISOString(),
     services: {
-      lstm_model: 'active',
-      tempo_data: 'connected',
-      cache: 'operational'
-    }
+      no2_forecasts: no2Forecasts.data.stations.length
+        ? `real model forecasts for ${no2Forecasts.data.stations.length} stations, not live`
+        : 'missing',
+      aqi_forecasts: 'simulated',
+      tempo_data: 'not integrated',
+    },
   };
   
   return successResponse(res, healthStatus, 'AI service is healthy');

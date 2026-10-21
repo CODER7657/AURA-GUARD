@@ -437,3 +437,8 @@ site/
 # ==============================================================================
 # Measured forecasting results are part of the repo (the backend serves them)
 !ml/results/*.json
+# The deployed forecaster's model bundle and the pre-registered agent questions are committed
+!ml/models/no2_gbm.joblib
+!ml/eval/*.json
+# EPA downloads stay local
+ml/data/

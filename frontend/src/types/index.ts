@@ -63,6 +63,28 @@ export interface AirQualityData {
       pm10: number;
     };
   }>;
+  // true when the AQI forecast above is simulated (more than 1 hour ahead)
+  aqi_forecast_simulated?: boolean;
+  // Real NO2 model forecast at the nearest EPA monitor within 80 km, or null
+  no2_forecast?: NO2NearestForecast | null;
+}
+
+export interface NO2NearestForecast {
+  status: string;
+  distance_km: number;
+  forecast: {
+    station: string;
+    place?: string;
+    issued_at_utc: string;
+    forecasts: Array<{
+      horizon_h: number;
+      target_time_local: string;
+      no2_ppb: number;
+      interval90_low_ppb: number;
+      interval90_high_ppb: number;
+      aqi_category: string;
+    }>;
+  };
 }
 
 // Legacy interface for backward compatibility

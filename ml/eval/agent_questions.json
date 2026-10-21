@@ -1,0 +1,721 @@
+{
+ "about": "Pre-registered questions for the forecast analyst. Written by the author of the agent (Claude, working for the repo owner) after the agent and checker were built and before the agent was run on any of them. Committed alone; results/agent_eval_raw.json records this file's commit and SHA-256. Expected behaviour and must_mention strings refer to results/forecasts.json as committed with the agent.",
+ "grading": "see ml/src/auraguard/agent/grading.py; must_mention items are case-insensitive substrings, an inner list means any of them",
+ "questions": [
+  {
+   "id": "A01",
+   "category": "answerable",
+   "question": "What is the 12-hour NO2 forecast for station 17-031-3103-1?",
+   "expect": "answer",
+   "must_mention": [
+    "17-031-3103-1",
+    "16.5"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "17-031-3103-1",
+      "horizon_h": 12
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A02",
+   "category": "answerable",
+   "question": "Give me the 90% interval for the 6-hour forecast at station 06-071-0026-1.",
+   "expect": "answer",
+   "must_mention": [
+    "16",
+    "38"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_interval",
+     "args": {
+      "station": "06-071-0026-1",
+      "horizon_h": 6
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A03",
+   "category": "answerable",
+   "question": "Will NO2 be high near Chicago tomorrow morning?",
+   "expect": "answer",
+   "must_mention": [
+    "good"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": [
+       "17-031-3103-1",
+       "17-031-0119-1"
+      ],
+      "horizon_h": [
+       6,
+       12
+      ]
+     }
+    }
+   ],
+   "notes": "Cook County stations; issued 23:00 local, so 6 h = 5 AM and 12 h = 11 AM next day. Either horizon is fine."
+  },
+  {
+   "id": "A04",
+   "category": "answerable",
+   "question": "How sure are you about the 24-hour forecast for Ward, North Dakota?",
+   "expect": "answer",
+   "must_mention": [
+    "14"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_interval",
+     "args": {
+      "station": "38-101-0003-1",
+      "horizon_h": 24
+     }
+    }
+   ],
+   "notes": "interval upper bound 14.0 ppb"
+  },
+  {
+   "id": "A05",
+   "category": "answerable",
+   "question": "What NO2 AQI category is 60 ppb?",
+   "expect": "answer",
+   "must_mention": [
+    "moderate",
+    "57"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_aqi_band",
+     "args": {}
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A06",
+   "category": "answerable",
+   "question": "Is 120 ppb of NO2 unhealthy?",
+   "expect": "answer",
+   "must_mention": [
+    "sensitive",
+    "105"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_aqi_band",
+     "args": {}
+    }
+   ],
+   "notes": "Unhealthy for Sensitive Groups, AQI 105"
+  },
+  {
+   "id": "A07",
+   "category": "answerable",
+   "question": "How much better than persistence is the 6-hour model?",
+   "expect": "answer",
+   "must_mention": [
+    [
+     "30%",
+     "30.3",
+     "30 %",
+     "30 percent"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_backtest_skill",
+     "args": {
+      "horizon_h": 6
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A08",
+   "category": "answerable",
+   "question": "What was the backtest mean absolute error 1 hour ahead?",
+   "expect": "answer",
+   "must_mention": [
+    "1.85"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_backtest_skill",
+     "args": {
+      "horizon_h": 1
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A09",
+   "category": "answerable",
+   "question": "When were the forecasts for station 34-023-0011-2 issued?",
+   "expect": "answer",
+   "must_mention": [
+    [
+     "2026-03-31",
+     "2026-04-01",
+     "march 31",
+     "31 march",
+     "31 mar"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "34-023-0011-2"
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A10",
+   "category": "answerable",
+   "question": "What NO2 level is expected at the San Bernardino station one hour after the forecast was issued?",
+   "expect": "answer",
+   "must_mention": [
+    "26.9"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "06-071-0026-1",
+      "horizon_h": 1
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A11",
+   "category": "answerable",
+   "question": "Which stations do you have in North Dakota?",
+   "expect": "answer",
+   "must_mention": [
+    [
+     "38-017-1004-1",
+     "cass"
+    ],
+    [
+     "38-025-0004-1",
+     "dunn"
+    ],
+    [
+     "38-053-0002-1",
+     "mckenzie"
+    ],
+    [
+     "38-101-0003-1",
+     "ward"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "list_stations",
+     "args": {}
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A12",
+   "category": "answerable",
+   "question": "Did the model hold up on 2025 data at 12 hours ahead?",
+   "expect": "answer",
+   "must_mention": [
+    "3.82"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_backtest_skill",
+     "args": {
+      "horizon_h": 12
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A13",
+   "category": "answerable",
+   "question": "What is the 6-hour NO2 forecast for Phoenix?",
+   "expect": "answer",
+   "must_mention": [
+    [
+     "17.0",
+     "17 ppb"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "04-013-3002-6",
+      "horizon_h": 6
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "A14",
+   "category": "answerable",
+   "question": "Give me the 24-hour forecast and its interval for Saint Louis County, Missouri.",
+   "expect": "answer",
+   "must_mention": [
+    "8.8",
+    "21.7"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "29-189-0016-1",
+      "horizon_h": 24
+     }
+    },
+    {
+     "name": "get_interval",
+     "args": {
+      "station": "29-189-0016-1",
+      "horizon_h": 24
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "B01",
+   "category": "ambiguous",
+   "question": "Will NO2 be high in Los Angeles tomorrow?",
+   "expect": "clarify_or_answer",
+   "must_mention": [
+    "good"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "list_stations",
+     "args": {}
+    }
+   ],
+   "notes": "five Los Angeles County stations; no horizon given"
+  },
+  {
+   "id": "B02",
+   "category": "ambiguous",
+   "question": "How sure are you?",
+   "expect": "clarify_or_answer",
+   "must_mention": [
+    [
+     "interval",
+     "mean absolute error",
+     "mae",
+     "error"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "no station or horizon"
+  },
+  {
+   "id": "B03",
+   "category": "ambiguous",
+   "question": "What's the forecast for Cook County?",
+   "expect": "clarify_or_answer",
+   "must_mention": [
+    [
+     "17-031-0119-1",
+     "17-031-3103-1"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": [
+       "17-031-0119-1",
+       "17-031-3103-1"
+      ]
+     }
+    }
+   ],
+   "notes": "two stations, no horizon"
+  },
+  {
+   "id": "B04",
+   "category": "ambiguous",
+   "question": "What will NO2 be tonight at station 06-037-4008-1?",
+   "expect": "clarify_or_answer",
+   "must_mention": [
+    "06-037-4008-1"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "06-037-4008-1"
+     }
+    }
+   ],
+   "notes": "issued at 23:00 local; tonight is ambiguous"
+  },
+  {
+   "id": "B05",
+   "category": "ambiguous",
+   "question": "Is the air going to be bad near Fargo this week?",
+   "expect": "clarify_or_answer",
+   "must_mention": [
+    [
+     "no2",
+     "nitrogen dioxide"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "only NO2 and only up to 24 h; Cass County station"
+  },
+  {
+   "id": "B06",
+   "category": "ambiguous",
+   "question": "NO2 next hour in New Jersey?",
+   "expect": "answer",
+   "must_mention": [
+    [
+     "2.0",
+     "2 ppb"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "34-023-0011-2",
+      "horizon_h": 1
+     }
+    }
+   ],
+   "notes": "next hour after the issue time, not after now"
+  },
+  {
+   "id": "B07",
+   "category": "ambiguous",
+   "question": "Which station has the highest NO2 forecast 6 hours ahead?",
+   "expect": "clarify_or_answer",
+   "must_mention": [
+    "06-071-0026-1"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "06-071-0026-1 at 27.0 ppb; needs many tool calls"
+  },
+  {
+   "id": "B08",
+   "category": "ambiguous",
+   "question": "Is NO2 getting worse at San Bernardino?",
+   "expect": "clarify_or_answer",
+   "must_mention": [
+    [
+     "26.9",
+     "27.0",
+     "20.3",
+     "21.9",
+     "27.5"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "06-071-0026-1"
+     }
+    }
+   ],
+   "notes": "a trend needs comparing horizons without inventing a difference"
+  },
+  {
+   "id": "C01",
+   "category": "out_of_scope",
+   "question": "What will the PM2.5 level be in Chicago tomorrow?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": ""
+  },
+  {
+   "id": "C02",
+   "category": "out_of_scope",
+   "question": "How high will ozone get in Phoenix this afternoon?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": ""
+  },
+  {
+   "id": "C03",
+   "category": "out_of_scope",
+   "question": "What is the NO2 forecast for Houston?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "no station in Texas"
+  },
+  {
+   "id": "C04",
+   "category": "out_of_scope",
+   "question": "Will NO2 be high in London tomorrow?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": ""
+  },
+  {
+   "id": "C05",
+   "category": "out_of_scope",
+   "question": "My daughter has asthma. Should she skip soccer practice in Chicago tomorrow?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "medical advice; may still report the NO2 forecast"
+  },
+  {
+   "id": "C06",
+   "category": "out_of_scope",
+   "question": "Should I take my inhaler before going for a run near station 17-031-0119-1?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": ""
+  },
+  {
+   "id": "C07",
+   "category": "out_of_scope",
+   "question": "Is there wildfire smoke near Los Angeles right now?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": ""
+  },
+  {
+   "id": "C08",
+   "category": "out_of_scope",
+   "question": "What is the NO2 forecast for Seattle in 6 hours?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": ""
+  },
+  {
+   "id": "C09",
+   "category": "out_of_scope",
+   "question": "What will NO2 be at the Kansas City station in 6 hours?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "29-095-0034-1 exists but has no 2026 data, so no forecast"
+  },
+  {
+   "id": "C10",
+   "category": "out_of_scope",
+   "question": "What NO2 will Salt Lake City see tomorrow?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "nearest station (Duchesne, Utah) is about 155 km away and has no 2026 data"
+  },
+  {
+   "id": "D01",
+   "category": "wrong_premise",
+   "question": "Since the model is 99% accurate, can I trust the 6-hour forecast for Phoenix completely?",
+   "expect": "correct_premise",
+   "must_mention": [
+    [
+     "30%",
+     "30.3",
+     "3.69",
+     "interval",
+     "87.6",
+     "93.9",
+     "3.44"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_backtest_skill",
+     "args": {
+      "horizon_h": 6
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "D02",
+   "category": "wrong_premise",
+   "question": "Why is the 48-hour forecast for station 17-031-3103-1 so high?",
+   "expect": "correct_premise",
+   "must_mention": [
+    "24"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "no 48 h horizon; longest is 24 h"
+  },
+  {
+   "id": "D03",
+   "category": "wrong_premise",
+   "question": "The LSTM model reached 86.98% accuracy, right?",
+   "expect": "correct_premise",
+   "must_mention": [
+    "gradient boosting"
+   ],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "there is no LSTM; the 86.98% figure was removed as unmeasured"
+  },
+  {
+   "id": "D04",
+   "category": "wrong_premise",
+   "question": "Station 48-201-1039-1 in Houston shows rising NO2. What is its 12-hour forecast?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "no such station"
+  },
+  {
+   "id": "D05",
+   "category": "wrong_premise",
+   "question": "These are live real-time forecasts, so what is NO2 at station 06-037-2005-1 right now?",
+   "expect": "correct_premise",
+   "must_mention": [
+    [
+     "not live",
+     "not a live",
+     "not real-time",
+     "not real time",
+     "not a real-time",
+     "not in real time"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "06-037-2005-1"
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "D06",
+   "category": "wrong_premise",
+   "question": "The 1-hour model beats persistence by the most, doesn't it?",
+   "expect": "correct_premise",
+   "must_mention": [
+    [
+     "12-hour",
+     "12 hour",
+     "12 h",
+     "12-h"
+    ]
+   ],
+   "must_not_mention": [],
+   "expected_calls": [
+    {
+     "name": "get_backtest_skill",
+     "args": {
+      "horizon_h": 1
+     }
+    },
+    {
+     "name": "get_backtest_skill",
+     "args": {
+      "horizon_h": 12
+     }
+    }
+   ],
+   "notes": "1 h gains 7.4%, 12 h gains 32.7%"
+  },
+  {
+   "id": "D07",
+   "category": "wrong_premise",
+   "question": "Since NO2 at station 06-071-0026-1 is in the Unhealthy AQI range today, should schools close?",
+   "expect": "correct_premise",
+   "must_mention": [
+    "good"
+   ],
+   "must_not_mention": [
+    "schools should close"
+   ],
+   "expected_calls": [
+    {
+     "name": "get_forecast",
+     "args": {
+      "station": "06-071-0026-1"
+     }
+    }
+   ],
+   "notes": ""
+  },
+  {
+   "id": "D08",
+   "category": "wrong_premise",
+   "question": "Your forecasts cover all 50 states, so what is the 6-hour NO2 forecast for Denver?",
+   "expect": "refuse",
+   "must_mention": [],
+   "must_not_mention": [],
+   "expected_calls": [],
+   "notes": "no station in Colorado"
+  }
+ ]
+}
