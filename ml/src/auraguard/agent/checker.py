@@ -8,7 +8,10 @@ An answer passes only if:
    numbers, is rejected on purpose.
 2. every station id in it is a real station, and every US state or "X County" it
    names belongs to a monitor or appears in the question.
-3. an out-of-scope question (see ``scope``) gets a refusal, and a medical question
+3. a claim that there is no monitor, station or data for a place must be true: if the
+   station list has a monitor in the named city, county or state, the draft fails and the
+   feedback names the station(s).
+4. an out-of-scope question (see ``scope``) gets a refusal, and a medical question
    gets no health instruction.
 
 Nothing here calls a model. The same function checks the fallback answer, so the
@@ -20,7 +23,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-from auraguard.agent.scope import Scope
+from auraguard.agent.scope import PLACES, Scope
 
 STATION_ID = re.compile(r"\b\d{2}-\d{3}-\d{4}(?:-\d{1,2})?\b")
 # Chemical names and similar tokens whose digits are not quantities.
@@ -34,6 +37,17 @@ REFUSAL = re.compile(
     r"not a (?:doctor|medical))\b",
     re.IGNORECASE,
 )
+# "there is no monitor in Texas", "don't have a station for Fargo", "no data for ...", "not in the dataset"
+NO_MONITOR_CLAIM = re.compile(
+    r"\bno\s+(?:\w+\s+){0,2}?(?:monitors?|monitoring|stations?|data|readings?)\b"
+    r"|\b(?:do|does)(?:n't| not)\s+have\b[^.;!?]{0,50}?\b(?:monitors?|monitoring|stations?|data|readings?)\b"
+    r"|\bnot\s+in\s+(?:the|my|our)\s+(?:dataset|data|station list|list)\b"
+    r"|\b(?:isn't|is not|aren't|are not)\s+(?:any\s+)?(?:covered|monitored)\b",
+    re.IGNORECASE,
+)
+# a clause ends where the answer turns to something else ("..., but the nearest is in Michigan")
+CLAUSE_BREAK = re.compile(r"[.;!?\n]|\bbut\b|\bhowever\b|\balthough\b|\binstead\b|\bnearest\b|\bclosest\b|"
+                          r"\bother than\b|\bexcept\b|\bwhile\b|\bwhereas\b", re.IGNORECASE)
 HEALTH_INSTRUCTION = re.compile(
     r"\b(you should (?:take|use|stay|avoid|go|exercise|run|wear|keep)|use your inhaler|take your|it(?:'s| is) "
     r"(?:perfectly )?safe (?:to|for)|(?:is|are) safe for|no need to worry)\b",
@@ -94,6 +108,67 @@ def _grounded(token: str, is_pct: bool, sources: list[float]) -> bool:
     return False
 
 
+def _without_forecast(obj) -> set[str]:
+    """Station ids that a tool output says have no forecast (list_stations ``has_forecast`` or a get_* error)."""
+    out: set[str] = set()
+    if isinstance(obj, dict):
+        if obj.get("has_forecast") is False and isinstance(obj.get("station"), str):
+            out.add(obj["station"])
+        if isinstance(obj.get("error"), str) and "has no forecast" in obj["error"] and isinstance(obj.get("station"), str):
+            out.add(obj["station"])
+        for v in obj.values():
+            out |= _without_forecast(v)
+    elif isinstance(obj, (list, tuple)):
+        for v in obj:
+            out |= _without_forecast(v)
+    return out
+
+
+def _false_no_monitor_claims(text: str, scope: Scope, station_places: dict[str, str],
+                             state_names: set[str], no_forecast: set[str]) -> list[str]:
+    """Issues for each "no monitor / station / data for <place>" claim that the station list contradicts.
+
+    A station that a tool output reports as having no forecast does not contradict "no data for" its place.
+    Only the clause that makes the claim is read, so "none in Ohio, but Michigan has one" is fine. A city the
+    clause names is judged by the scope check (a monitor within NEAR_KM), and its state is then not read as
+    a separate claim, so "no monitor near Tucson, Arizona" is judged on Tucson alone."""
+    issues: list[str] = []
+    by_state: dict[str, list[str]] = {}
+    by_county: dict[str, list[str]] = {}
+    for sid, place in sorted(station_places.items()):
+        if sid in no_forecast:
+            continue
+        by_state.setdefault(place.split(", ")[-1], []).append(f"{sid} ({place})")
+        by_county.setdefault(place.split(", ")[0], []).append(f"{sid} ({place})")
+    near = {p["name"].lower(): p for p in scope.places if p.get("near") and p.get("nearest_station")}
+    for claim in NO_MONITOR_CLAIM.finditer(text):
+        start = max((m.end() for m in CLAUSE_BREAK.finditer(text, 0, claim.start())), default=0)
+        end = next((m.start() for m in CLAUSE_BREAK.finditer(text, claim.end())), len(text))
+        clause = text[start:end]
+        named_city = False
+        for name, state, *_ in sorted(PLACES, key=lambda p: -len(p[0])):
+            if state is not None and re.search(rf"\b{re.escape(name)}\b", clause, re.IGNORECASE):
+                named_city = True
+                clause = re.sub(rf"\b{re.escape(name)}\b", " ", clause, flags=re.IGNORECASE)
+                sid = near.get(name.lower(), {}).get("nearest_station")
+                if sid and sid not in no_forecast:
+                    issues.append(f"says there is no monitor for {name}, but station {sid} "
+                                  f"({station_places.get(sid, '')}) is within range; use it")
+        if named_city:
+            continue
+        for county in sorted(set(re.findall(r"\b([A-Z][a-z]+(?: [A-Z][a-z]+)?) County\b", clause))):
+            if county in by_county:
+                issues.append(f"says there is no monitor in {county} County, but there is: "
+                              + ", ".join(by_county[county]))
+        for state in sorted(state_names, key=len, reverse=True):
+            if re.search(rf"\b{re.escape(state)}\b", clause):
+                clause = re.sub(rf"\b{re.escape(state)}\b", " ", clause)
+                if state in by_state:
+                    issues.append(f"says there is no monitor or data for {state}, but the station list has: "
+                                  + ", ".join(by_state[state]))
+    return sorted(set(issues))
+
+
 def check(answer: str, question: str, tool_outputs: list, scope: Scope, station_places: dict[str, str],
           state_names: set[str]) -> CheckResult:
     """``station_places`` maps station id to "County, State"."""
@@ -117,6 +192,10 @@ def check(answer: str, question: str, tool_outputs: list, scope: Scope, station_
         if county not in known_counties and county not in question:
             issues.append(f"{county} County is not a monitor's county")
 
+    # false "no monitor here" claims
+    issues += _false_no_monitor_claims(text, scope, station_places, state_names,
+                                            _without_forecast(tool_outputs))
+
     # 1. numbers
     sources = _numbers_in(tool_outputs) + _numbers_in(question)
     body = NOT_NUMBERS.sub(" ", STATION_ID.sub(" ", text))
@@ -125,7 +204,7 @@ def check(answer: str, question: str, tool_outputs: list, scope: Scope, station_
     if bad:
         issues.append("numbers not found in any tool output: " + ", ".join(sorted(set(bad))))
 
-    # 3. scope
+    # 4. scope
     if not scope.in_scope and not is_refusal(text):
         issues.append("the question is out of scope (" + ", ".join(scope.reasons) + ") but the answer does not "
                       "say so plainly")

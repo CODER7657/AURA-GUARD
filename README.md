@@ -94,7 +94,11 @@ from 75% to 100% while behaviour stayed at about 80%.
 **Where it fails.** The most damaging error is a false "there is no monitor here": the
 agent told users there are no NO₂ monitors in North Dakota (Fargo, B05) and Arizona
 (Phoenix, D01), although both are in its own station list. Those sentences contain no
-number or station id, so the checker passes them. Wrong-premise questions are the
+number or station id, so the checker passed them. The checker now also tests "no
+monitor, station or data for X" claims against the station list and sends a false one
+back with the station named. A targeted re-check of just those two questions after the
+fix (not a new full evaluation, details in ml/README.md): B05's false claim was caught
+and corrected on retry, and D01's new draft did not make it. Wrong-premise questions are the
 weakest category (4/8): asked "the LSTM reached 86.98% accuracy, right?", it refused
 instead of correcting the claim. Latency is 2.0 s median (p95 4.2 s) of actual work; on
 Groq's free tier, rate-limit waits push it to 33 s. Full report:

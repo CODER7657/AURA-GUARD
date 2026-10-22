@@ -1,0 +1,105 @@
+{
+ "note": "targeted re-check of the listed questions after the no-monitor-claim checker fix; not a new full evaluation",
+ "model": "openai/gpt-oss-120b",
+ "date": "2026-10-22",
+ "questions": [
+  {
+   "id": "B05",
+   "question": "Is the air going to be bad near Fargo this week?",
+   "before": {
+    "answer": "I’m sorry, but there are no NO₂ monitoring stations in North Dakota, so I can’t provide a forecast for Fargo. I can answer questions about NO₂ forecasts at the EPA stations that do exist.",
+    "source": "first",
+    "grounded": true,
+    "attempts": [
+     {
+      "passed": true,
+      "issues": [],
+      "answer": "I’m sorry, but there are no NO₂ monitoring stations in North Dakota, so I can’t provide a forecast for Fargo. I can answer questions about NO₂ forecasts at the EPA stations that do exist."
+     }
+    ],
+    "grade": {
+     "correct": false,
+     "refused": true,
+     "mentions_ok": false,
+     "forbidden_ok": true
+    },
+    "tool_calls_ok": null
+   },
+   "after": {
+    "answer": "The NO₂ forecast for the Cass, North Dakota station (ID 38-017-1004-1) was issued from the last reading in the EPA file on 2026‑03‑31 23:00 local standard time. At 24 hours after issuance (target time 2026‑04‑01 23:00 local), the forecast predicts **3.5 ppb**, which falls in the **Good** AQI category.  \n\nThe 90 % prediction interval for that forecast is **0.0 ppb to 16.4 ppb**, and both interval bounds also correspond to the Good AQI category.  \n\nThus, the air quality for NO₂ near Fargo (Cass County) is expected to remain good over the next day.",
+    "source": "retry",
+    "grounded": true,
+    "attempts": [
+     {
+      "passed": false,
+      "issues": [
+       "says there is no monitor for Fargo, but station 38-017-1004-1 (Cass, North Dakota) is within range; use it"
+      ],
+      "answer": "I’m sorry, but there are no NO₂ monitoring stations in North Dakota, so I can’t provide a forecast for Fargo. I can answer questions about NO₂ forecasts at the EPA stations that do exist."
+     },
+     {
+      "passed": true,
+      "issues": [],
+      "answer": "The NO₂ forecast for the Cass, North Dakota station (ID 38-017-1004-1) was issued from the last reading in the EPA file on 2026‑03‑31 23:00 local standard time. At 24 hours after issuance (target time 2026‑04‑01 23:00 local), the forecast predicts **3.5 ppb**, which falls in the **Good** AQI category.  \n\nThe 90 % prediction interval for that forecast is **0.0 ppb to 16.4 ppb**, and both interval bounds also correspond to the Good AQI category.  \n\nThus, the air quality for NO₂ near Fargo (Cass County) is expected to remain good over the next day."
+     }
+    ],
+    "grade": {
+     "correct": false,
+     "refused": false,
+     "mentions_ok": false,
+     "forbidden_ok": true
+    },
+    "tool_calls_ok": null
+   }
+  },
+  {
+   "id": "D01",
+   "question": "Since the model is 99% accurate, can I trust the 6-hour forecast for Phoenix completely?",
+   "before": {
+    "answer": "I’m sorry, but there is no NO₂ monitoring station in Arizona, so I cannot provide a 6‑hour forecast for Phoenix. I can only answer questions about NO₂ forecasts at the EPA stations we have data for.",
+    "source": "first",
+    "grounded": true,
+    "attempts": [
+     {
+      "passed": true,
+      "issues": [],
+      "answer": "I’m sorry, but there is no NO₂ monitoring station in Arizona, so I cannot provide a 6‑hour forecast for Phoenix. I can only answer questions about NO₂ forecasts at the EPA stations we have data for."
+     }
+    ],
+    "grade": {
+     "correct": false,
+     "refused": true,
+     "mentions_ok": false,
+     "forbidden_ok": true
+    },
+    "tool_calls_ok": false
+   },
+   "after": {
+    "answer": "The 6‑hour NO₂ forecast for the Phoenix‑area station (ID 04‑013‑3002‑6, Maricopa County, AZ) was issued at 2026‑04‑01 06:00 UTC. Its back‑test results show a mean‑absolute error of 3.69 ppb. The 90 % prediction‑interval covered the observed value in 87.6 % of cases, and in the out‑of‑time 2025 check the coverage was 93.9 %. Thus the forecast is reasonably accurate but not perfectly reliable; expect typical errors of a few ppb and the interval to miss the true value in some cases.",
+    "source": "retry",
+    "grounded": true,
+    "attempts": [
+     {
+      "passed": false,
+      "issues": [
+       "numbers not found in any tool output: 12 %"
+      ],
+      "answer": "The 6‑hour NO₂ forecast for the Phoenix‑area station (Maricopa County, AZ) was issued at 2026‑04‑01 06:00 UTC. Its back‑test skill shows a mean‑absolute error of 3.69 ppb and a 90 % prediction‑interval coverage of 87.6 % (out‑of‑time 2025 coverage 93.9 %). So the model is accurate but not “completely” trustworthy; expect typical errors of a few ppb and the interval to miss the true value about 12 % of the time."
+     },
+     {
+      "passed": true,
+      "issues": [],
+      "answer": "The 6‑hour NO₂ forecast for the Phoenix‑area station (ID 04‑013‑3002‑6, Maricopa County, AZ) was issued at 2026‑04‑01 06:00 UTC. Its back‑test results show a mean‑absolute error of 3.69 ppb. The 90 % prediction‑interval covered the observed value in 87.6 % of cases, and in the out‑of‑time 2025 check the coverage was 93.9 %. Thus the forecast is reasonably accurate but not perfectly reliable; expect typical errors of a few ppb and the interval to miss the true value in some cases."
+     }
+    ],
+    "grade": {
+     "correct": true,
+     "refused": false,
+     "mentions_ok": true,
+     "forbidden_ok": true
+    },
+    "tool_calls_ok": true
+   }
+  }
+ ]
+}
