@@ -93,6 +93,38 @@ def test_invented_stations_and_states_fail(tools, station):
     assert run_check(tools, "I don't have a station in Texas.", "NO2 in Texas?", []).passed
 
 
+def test_false_no_monitor_claims_fail_and_name_the_stations(tools):
+    fargo = "Is the air going to be bad near Fargo this week?"
+    r = run_check(tools, "I'm sorry, but there are no NO2 monitoring stations in North Dakota, so I can't provide a "
+                  "forecast for Fargo.", fargo, [])
+    assert not r.passed and "38-017-1004-1" in r.feedback() and "North Dakota" in r.feedback()
+    phoenix = "Can I trust the 6-hour forecast for Phoenix completely?"
+    r = run_check(tools, "I'm sorry, but there is no NO2 monitoring station in Arizona, so I cannot provide a "
+                  "6-hour forecast for Phoenix.", phoenix, [])
+    assert not r.passed and "04-013-3002-6" in r.feedback()
+    # a city alone, a county, and the "don't have" and "not in the dataset" phrasings
+    assert not run_check(tools, "I don't have a station for Phoenix.", phoenix, []).passed
+    assert not run_check(tools, "There is no monitor in Cass County.", "Cass County?", []).passed
+    assert not run_check(tools, "North Dakota is not in the dataset.", "forecast?", []).passed
+    assert not run_check(tools, "There is no data for Arizona.", "forecast?", []).passed
+
+
+def test_true_no_monitor_claims_pass(tools):
+    assert run_check(tools, "There is no monitor in Texas, so I can't forecast it.", "NO2 in Texas?", []).passed
+    # the claim is about Ohio; naming Illinois in another clause is not a claim about Illinois
+    assert run_check(tools, "I have no monitor in Ohio, so I can't forecast it, but the nearest station is in Cook, Illinois.",
+                     "NO2 in Ohio?", []).passed
+    # a monitor in the state, but none within range of the city named
+    assert run_check(tools, "I have no station near Tucson, Arizona.", "NO2 in Tucson, Arizona?", []).passed
+    # a station that the tools report as having no forecast does not make "no data" false
+    out = [{"stations": [{"station": "49-013-7011-1", "place": "Duchesne, Utah", "has_forecast": False}]}]
+    assert run_check(tools, "There is no recent data for Utah.", "NO2 in Utah?", out).passed
+    kc = [{"stations": [{"station": "29-095-0034-1", "place": "Jackson, Missouri", "has_forecast": False}]}]
+    assert run_check(tools, "There is no data for Kansas City.", "NO2 at the Kansas City station?", kc).passed
+    # no claim at all
+    assert run_check(tools, "Cass County in North Dakota has a monitor.", "Fargo?", []).passed
+
+
 def test_out_of_scope_needs_a_refusal_and_no_health_instruction(tools):
     assert not run_check(tools, "PM2.5 looks fine.", "Is PM2.5 bad in Chicago?", []).passed
     assert run_check(tools, "I only forecast NO2, so I can't tell you about PM2.5.", "Is PM2.5 bad in Chicago?",

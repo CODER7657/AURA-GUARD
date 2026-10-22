@@ -157,6 +157,8 @@ Every draft then goes through a deterministic checker (`agent/checker.py`):
 3. A question about another pollutant, a place with no monitor within 80 km (checked
    against a small built-in gazetteer), or medical advice must get a plain refusal,
    and a medical question must get no health instruction.
+4. A claim of "no monitor, station or data" for a city, county or state must be true
+   against the station list; if it is not, the draft fails with the station ids named.
 
 A draft that fails gets the checker's feedback and one retry. If that fails too, the
 answer is a template filled only from tool outputs, and the template is checked by the
@@ -204,11 +206,23 @@ work; p50 32.8 s, p95 80.3 s including the runner's waits for Groq's free-tier l
 
 **Where it fails**
 
-- **False "no monitor here".** B05 (Fargo) and D01 (Phoenix): the agent said there are
-  no NO₂ monitors in North Dakota and Arizona, though both are in the station list. A
-  wrong claim with no number in it passes the checker, which only looks at numbers,
-  station ids and places named. A `list_stations` lookup forced before any "no station"
-  claim is the obvious next fix.
+- **False "no monitor here" (found in the eval, then fixed).** B05 (Fargo) and D01
+  (Phoenix): the agent said there are no NO₂ monitors in North Dakota and Arizona,
+  though both are in the station list. A wrong claim with no number in it passed the
+  checker. The checker now reads any "no monitor / station / data for X" claim (also
+  "don't have a station", "not in the dataset"), looks up the city, county or state it
+  names, and fails the draft with the station ids when one exists, so the existing
+  retry corrects it. A station that a tool output reports as having no forecast does not
+  count against a "no data" claim, and a true "no monitor in Texas" passes. Offline
+  tests cover all of this. **Targeted re-check after the fix, 2 questions only, not a
+  new full eval** (`scripts/recheck_agent.py`, `results/agent_fix_check.json`; the 40
+  question results in `agent_eval.md` are unchanged and predate the fix): on B05 the
+  first draft again said there was no monitor, the checker caught it, and the retry
+  answered from the Cass County station (38-017-1004-1). The string grader still marks
+  B05 wrong, because the answer writes "NO₂" and the grader looks for "no2". On D01 the
+  new first draft did not repeat the false claim (the checker sent it back for an
+  ungrounded "12 %", and the retry was graded correct), so D01 does not show the new
+  rule firing. One run each, so this shows the fix works on B05, not how often.
 - **Wrong premises are refused, not corrected.** D03 ("the LSTM reached 86.98%
   accuracy, right?") got a refusal; D06 ("the 1-hour model beats persistence by the
   most") got the 1-hour number without saying the 12-hour model gains more.
