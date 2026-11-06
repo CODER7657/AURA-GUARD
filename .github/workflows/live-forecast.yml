@@ -8,6 +8,13 @@ on:
   schedule:
     - cron: "25 * * * *"  # AirNow posts most of an hour's data by about :20
   workflow_dispatch:
+  # Dry run on PRs that touch the pipeline: same fetch, contract and model, nothing published.
+  pull_request:
+    paths:
+      - ".github/workflows/live-forecast.yml"
+      - "ml/src/auraguard/**"
+      - "ml/scripts/live_forecast.py"
+      - "ml/models/**"
 
 permissions:
   contents: write
@@ -43,7 +50,7 @@ jobs:
           echo "code=$code" >> "$GITHUB_OUTPUT"
           if [ "$code" -ne 0 ] && [ "$code" -ne 2 ]; then exit "$code"; fi
       - name: publish to live-data
-        if: steps.forecast.outputs.code == '0'
+        if: steps.forecast.outputs.code == '0' && github.event_name != 'pull_request'
         run: |
           git config user.name "aura-guard-bot"
           git config user.email "aura-guard-bot@users.noreply.github.com"
@@ -61,6 +68,9 @@ jobs:
           git add ml/live
           git commit -q -m "live forecast $(date -u +'%F %H:00') UTC" || { echo "nothing changed"; exit 0; }
           git push -q origin live-data
+      - name: show the dry-run result
+        if: github.event_name == 'pull_request' && steps.forecast.outputs.code == '0'
+        run: python -c "import json; d=json.load(open('$RUNNER_TEMP/forecasts.json')); c=d['data_contract']; print('stations forecast:', len(d['stations']), '| data as of', d['data_as_of_utc'], 'UTC | missing', c['stations_missing'], '| stale', c['stations_stale'], '| sparse', c['stations_sparse']); s=d['stations'][0]; print(s['station'], s['place'], [(f['horizon_h'], f['no2_ppb']) for f in s['forecasts']])"
       - name: summary
         if: always()
         run: |
