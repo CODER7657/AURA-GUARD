@@ -27,7 +27,10 @@ cp .env.example .env                     # add a Groq API key to ask the agent
 python -m auraguard.agent "Will NO2 be high near Chicago tomorrow morning?"
 ```
 
-The served forecasts are in [`ml/results/forecasts.json`](ml/results/forecasts.json).
+**Live:** [aura-guard-live.vercel.app](https://aura-guard-live.vercel.app), refreshed every hour from EPA AirNow.
+
+The live forecasts are published to [`ml/live/forecasts.json` on the `live-data` branch](https://github.com/CODER7657/AURA-GUARD/blob/live-data/ml/live/forecasts.json);
+the API serves the backtest-era file [`ml/results/forecasts.json`](ml/results/forecasts.json).
 Method, every number and the limitations: [`ml/README.md`](ml/README.md).
 
 ## What is real, and what is not yet
@@ -35,7 +38,8 @@ Method, every number and the limitations: [`ml/README.md`](ml/README.md).
 | Part | Status |
 |---|---|
 | NO₂ forecaster ([`ml/`](ml/README.md)) | **Real.** Gradient boosting trained on EPA AirData hourly NO₂ from 20 monitors, 2024; walk-forward backtest, then checked on all of 2025 |
-| NO₂ forecasts in the API and dashboard | **Real model output, not live.** Issued from the last hour of the newest EPA file (March or April 2026), 17 of 20 stations; every response says when |
+| Live NO₂ forecasts ([site](https://aura-guard-live.vercel.app)) | **Real and live.** An hourly GitHub Actions job pulls the last 72 h of AirNow NO₂, applies a data contract (plausible values, at least 12 of the last 24 h, no more than 6 h stale), runs the deployed model and publishes 1/6/12/24 h forecasts with 90% intervals to the `live-data` branch. A static page on Vercel reads that file. AirNow data is preliminary |
+| NO₂ forecasts in the API and React dashboard | **Real model output, not live.** Issued from the last hour of the newest EPA file (March or April 2026), 17 of 20 stations; every response says when |
 | Forecast analyst (`POST /api/v1/predictions/ask`, CLI) | **Real.** An LLM limited to five forecast tools, with a deterministic grounding check on every answer |
 | Weekly monitoring | **Real.** A GitHub Actions job re-scores the model on the newest public EPA data and fails below fixed thresholds |
 | Current readings | **Real when configured.** EPA AirNow, with an AirNow API key |
@@ -373,7 +377,7 @@ We welcome contributions to AURA-GUARD! Here's how to get started:
 
 ## Roadmap
 
-1. **Go live.** Feed each station's last 7 days of AirNow readings to the deployed model at request time instead of the last EPA file, and replace the simulated AQI forecasts.
+1. **Score the live forecasts.** Each hourly run is appended to `ml/live/history/` on `live-data`; compare them with the readings that followed, then point the API at the live file and replace the simulated AQI forecasts.
 2. **Per-station intervals.** Calibrate the 90% interval per station; the shared width under-covers the busiest monitor.
 3. **Add NASA TEMPO.** Use TEMPO NO₂ columns (NASA Earthdata) as an extra feature and measure whether they improve the backtest.
 4. **More data.** More monitors, more years, and weather inputs (wind, boundary-layer height).
