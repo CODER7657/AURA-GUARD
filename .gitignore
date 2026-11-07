@@ -444,3 +444,7 @@ site/
 ml/data/
 ml/.venv/
 ml/live/
+
+# Live forecast page (static, deployed to Vercel)
+!site/
+!site/package.json
