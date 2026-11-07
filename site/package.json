@@ -1,0 +1,6 @@
+{
+  "name": "aura-guard-site",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --test" }
+}

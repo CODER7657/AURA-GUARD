@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURA-GUARD · Live NO2 forecast</title>
+<meta name="description" content="Hourly NO2 forecasts with 90% intervals for US air quality monitors, from live EPA AirNow data.">
+<meta name="theme-color" content="#f6f8f9">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230f766e'/%3E%3Crect x='3' y='9' width='2' height='4' fill='%23fff'/%3E%3Crect x='7' y='6' width='2' height='7' fill='%23fff'/%3E%3Crect x='11' y='3' width='2' height='10' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f6f8f9; --panel: #ffffff; --ink: #11202b; --muted: #5b6b77; --faint: #8796a1;
+    --line: #dfe5e9; --accent: #0f766e; --accent-soft: #e6f2f1; --warn: #8a5a00; --warn-soft: #fbf3e2;
+    --good: #2f7d4f; --moderate: #9a7b0a; --usg: #b35a12; --unhealthy: #a1262b;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--sans); }
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+  .top { background: var(--panel); border-bottom: 1px solid var(--line); }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 56px; }
+  .brand { font-weight: 700; letter-spacing: .12em; font-size: 13px; white-space: nowrap; }
+  .brand span { color: var(--muted); font-weight: 500; letter-spacing: .02em; margin-left: 10px; }
+  .top nav { display: flex; gap: 20px; font-size: 14px; }
+  .top nav a { color: var(--muted); text-decoration: none; white-space: nowrap; }
+  .top nav a:hover { color: var(--ink); }
+
+  .intro { padding: 36px 0 20px; max-width: 760px; }
+  .eyebrow { font: 600 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+  h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; letter-spacing: -.02em; margin: 0 0 12px; }
+  .intro p { color: var(--muted); margin: 0; font-size: 16px; }
+
+  .status { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin: 8px 0 16px; }
+  .status div { padding: 14px 16px; border-left: 1px solid var(--line); min-width: 0; }
+  .status div:first-child { border-left: 0; }
+  .status dt { font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+  .status dd { margin: 4px 0 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .status dd small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+
+  .notice { border: 1px solid #ecd9b0; background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 12px 16px; margin: 0 0 16px; font-size: 14px; }
+  .notice.error { border-color: #ecc4c6; background: #fbeeee; color: var(--unhealthy); }
+  .notice button { margin-left: 8px; }
+
+  .controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 3px; }
+  .seg button { border: 0; background: transparent; color: var(--muted); font: 600 13px var(--sans); padding: 8px 14px; min-height: 36px; border-radius: 5px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .seg button:not([aria-pressed="true"]):hover { color: var(--ink); }
+  .controls label { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
+  select, .btn { font: 14px var(--sans); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; min-height: 36px; }
+  .btn { cursor: pointer; }
+  .btn:hover { border-color: #c4ced5; }
+
+  .table { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .row { display: grid; grid-template-columns: minmax(0, 1.6fr) 86px 132px minmax(160px, 2fr) 120px; gap: 16px; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line); }
+  .row.head { border-top: 0; font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); padding-top: 10px; padding-bottom: 10px; background: #fafbfc; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .place { font-weight: 600; }
+  .sid { display: block; font: 12px var(--mono); color: var(--faint); }
+  .val { font-weight: 700; font-size: 16px; }
+  .val small, .last small { font-weight: 400; color: var(--muted); font-size: 12px; }
+  .rng { display: block; font-size: 12px; color: var(--muted); }
+  .bar { position: relative; height: 22px; }
+  .bar .track { position: absolute; left: 0; right: 0; top: 10px; height: 2px; background: var(--line); }
+  .bar .ci { position: absolute; top: 6px; height: 10px; background: var(--accent-soft); border: 1px solid #a8d0cc; border-radius: 3px; }
+  .bar .pt { position: absolute; top: 3px; width: 2px; height: 16px; background: var(--accent); margin-left: -1px; }
+  .bar .ls { position: absolute; top: 7px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--panel); border: 2px solid var(--faint); }
+  .axis { display: flex; justify-content: space-between; font: 11px var(--mono); color: var(--faint); }
+  .cat { font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+  .cat::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: currentColor; }
+  .cat.good { color: var(--good); } .cat.moderate { color: var(--moderate); }
+  .cat.unhealthy-for-sensitive-groups { color: var(--usg); } .cat.unhealthy, .cat.very-unhealthy, .cat.hazardous { color: var(--unhealthy); }
+  .cat.none { color: var(--faint); }
+  .when { display: block; font-size: 12px; color: var(--muted); font-weight: 400; }
+  .empty { padding: 28px 16px; color: var(--muted); text-align: center; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; font-size: 12px; color: var(--muted); margin: 10px 2px 0; }
+  .legend i { display: inline-block; vertical-align: middle; margin-right: 6px; }
+  .legend .l-ci { width: 22px; height: 10px; background: var(--accent-soft); border: 1px solid #a8d0cc; border-radius: 3px; }
+  .legend .l-pt { width: 2px; height: 14px; background: var(--accent); }
+  .legend .l-ls { width: 8px; height: 8px; border-radius: 50%; border: 2px solid var(--faint); }
+
+  section.more { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; }
+  .card h2 { font-size: 15px; margin: 0 0 10px; }
+  .card p, .card li { color: var(--muted); font-size: 14px; }
+  .card ul { margin: 0; padding-left: 18px; }
+  .card p { margin: 0 0 8px; }
+  .kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; font-size: 14px; margin: 0; }
+  .kv dt { color: var(--faint); }
+  .kv dd { margin: 0; color: var(--ink); }
+  footer { border-top: 1px solid var(--line); color: var(--faint); font-size: 13px; padding: 20px 0 36px; }
+
+  .skeleton { height: 14px; border-radius: 4px; background: linear-gradient(90deg, #eef2f4, #f6f8f9, #eef2f4); background-size: 200% 100%; animation: sh 1.2s infinite linear; }
+  @keyframes sh { to { background-position: -200% 0; } }
+
+  @media (max-width: 860px) {
+    .status { grid-template-columns: 1fr 1fr; }
+    .status div:nth-child(3) { border-left: 0; }
+    .status div:nth-child(n+3) { border-top: 1px solid var(--line); }
+    section.more { grid-template-columns: 1fr; }
+    .row.head { display: none; }
+    .row { grid-template-columns: 1fr auto; grid-template-areas: "p v" "b b" "l c"; gap: 8px 12px; padding: 14px 16px; }
+    .row:nth-child(2) { border-top: 0; }
+    .c-place { grid-area: p; } .c-val { grid-area: v; } .c-bar { grid-area: b; }
+    .c-last { grid-area: l; text-align: left; } .c-cat { grid-area: c; text-align: right; }
+    .c-last::before { content: "Last reading "; color: var(--faint); font-size: 12px; }
+  }
+  @media (max-width: 560px) {
+    .brand span { display: none; }
+    .top nav { gap: 14px; }
+    .controls { flex-direction: column; align-items: stretch; }
+    .seg { display: grid; grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <div class="brand">AURA-GUARD<span>Live NO2 forecast</span></div>
+  <nav aria-label="Links">
+    <a href="#method">Method</a>
+    <a href="https://github.com/CODER7657/AURA-GUARD/tree/live-data/ml/live">Data</a>
+    <a href="https://github.com/CODER7657/AURA-GUARD">Source</a>
+  </nav>
+</div></div>
+
+<main class="wrap">
+  <div class="intro">
+    <p class="eyebrow">Hourly · EPA AirNow · 90% intervals</p>
+    <h1>Nitrogen dioxide, forecast for the next day at US monitors.</h1>
+    <p>Each hour a scheduled job pulls the latest readings, checks them against a data contract, and runs the model. Every number below comes from that run; nothing is filled in.</p>
+  </div>
+
+  <dl class="status" id="status" aria-live="polite">
+    <div><dt>Issued</dt><dd id="s-issued"><span class="skeleton" style="display:block;width:70%"></span></dd></div>
+    <div><dt>Data as of</dt><dd id="s-data"><span class="skeleton" style="display:block;width:60%"></span></dd></div>
+    <div><dt>Stations</dt><dd id="s-stations"><span class="skeleton" style="display:block;width:40%"></span></dd></div>
+    <div><dt>Interval</dt><dd id="s-interval"><span class="skeleton" style="display:block;width:50%"></span></dd></div>
+  </dl>
+
+  <div id="notice" hidden></div>
+
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Forecast horizon" id="horizons"></div>
+    <label>State <select id="state"><option value="">All states</option></select></label>
+  </div>
+
+  <div class="table" role="table" aria-label="Forecast by station" id="table">
+    <div class="row head" role="row">
+      <span role="columnheader">Monitor</span>
+      <span role="columnheader" class="num">Last</span>
+      <span role="columnheader" class="num">Forecast</span>
+      <span role="columnheader">90% interval, ppb</span>
+      <span role="columnheader">Category</span>
+    </div>
+    <div class="empty" id="loading">Loading the latest forecast…</div>
+  </div>
+  <div class="legend" aria-hidden="true">
+    <span><i class="l-ci"></i>90% interval</span>
+    <span><i class="l-pt"></i>Forecast</span>
+    <span><i class="l-ls"></i>Last reading</span>
+  </div>
+
+  <section class="more">
+    <div class="card" id="method">
+      <h2>Method</h2>
+      <p>Gradient boosting, one model per horizon, trained on EPA AirData hourly NO2 for 2024 and checked on all of 2025. At 12 hours its mean absolute error was 3.82 ppb, 33% lower than assuming the next reading equals this one.</p>
+      <p>Intervals are split-conformal: on held-out data, 90% of actual readings fell inside them.</p>
+      <p>Live readings are preliminary and not yet quality-assured by EPA. This is a research forecast, not a health advisory.</p>
+    </div>
+    <div class="card">
+      <h2>Not forecast this hour</h2>
+      <ul id="excluded"><li>Loading…</li></ul>
+      <h2 style="margin-top:16px">Model</h2>
+      <dl class="kv" id="model"></dl>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  Data: U.S. EPA AirNow (preliminary). Forecasts update about 25 minutes past each hour. Built by Pavan Patel. MIT licensed.
+</div></footer>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>
