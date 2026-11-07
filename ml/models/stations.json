@@ -1,0 +1,145 @@
+{
+ "note": "The 20 backtest stations. utc_offset_h is local STANDARD time, as in EPA AirData (taken from the data; Missouri and Utah stations, which had no forecast, use their zone).",
+ "stations": [
+  {
+   "station": "04-013-3002-6",
+   "place": "Maricopa, Arizona",
+   "lat": 33.45797,
+   "lon": -112.04659,
+   "utc_offset_h": -7
+  },
+  {
+   "station": "06-037-0113-1",
+   "place": "Los Angeles, California",
+   "lat": 34.05111,
+   "lon": -118.45636,
+   "utc_offset_h": -8
+  },
+  {
+   "station": "06-037-2005-1",
+   "place": "Los Angeles, California",
+   "lat": 34.1326,
+   "lon": -118.1272,
+   "utc_offset_h": -8
+  },
+  {
+   "station": "06-037-4008-1",
+   "place": "Los Angeles, California",
+   "lat": 33.859662,
+   "lon": -118.200707,
+   "utc_offset_h": -8
+  },
+  {
+   "station": "06-037-6012-1",
+   "place": "Los Angeles, California",
+   "lat": 34.38344,
+   "lon": -118.5284,
+   "utc_offset_h": -8
+  },
+  {
+   "station": "06-059-0007-5",
+   "place": "Orange, California",
+   "lat": 33.83062,
+   "lon": -117.93845,
+   "utc_offset_h": -8
+  },
+  {
+   "station": "06-065-5001-2",
+   "place": "Riverside, California",
+   "lat": 33.85275,
+   "lon": -116.54101,
+   "utc_offset_h": -8
+  },
+  {
+   "station": "06-071-0026-1",
+   "place": "San Bernardino, California",
+   "lat": 34.06812,
+   "lon": -117.52579,
+   "utc_offset_h": -8
+  },
+  {
+   "station": "17-031-0119-1",
+   "place": "Cook, Illinois",
+   "lat": 41.57862,
+   "lon": -87.557406,
+   "utc_offset_h": -6
+  },
+  {
+   "station": "17-031-3103-1",
+   "place": "Cook, Illinois",
+   "lat": 41.965193,
+   "lon": -87.876265,
+   "utc_offset_h": -6
+  },
+  {
+   "station": "20-133-0003-1",
+   "place": "Neosho, Kansas",
+   "lat": 37.67696,
+   "lon": -95.47594,
+   "utc_offset_h": -6
+  },
+  {
+   "station": "29-095-0034-1",
+   "place": "Jackson, Missouri",
+   "lat": 39.104686,
+   "lon": -94.57079,
+   "utc_offset_h": -6
+  },
+  {
+   "station": "29-189-0016-1",
+   "place": "Saint Louis, Missouri",
+   "lat": 38.75264,
+   "lon": -90.44884,
+   "utc_offset_h": -6
+  },
+  {
+   "station": "29-510-0094-1",
+   "place": "St. Louis City, Missouri",
+   "lat": 38.63114,
+   "lon": -90.28115,
+   "utc_offset_h": -6
+  },
+  {
+   "station": "34-023-0011-2",
+   "place": "Middlesex, New Jersey",
+   "lat": 40.462182,
+   "lon": -74.429439,
+   "utc_offset_h": -5
+  },
+  {
+   "station": "38-017-1004-1",
+   "place": "Cass, North Dakota",
+   "lat": 46.933754,
+   "lon": -96.85535,
+   "utc_offset_h": -6
+  },
+  {
+   "station": "38-025-0004-1",
+   "place": "Dunn, North Dakota",
+   "lat": 47.342423,
+   "lon": -102.645864,
+   "utc_offset_h": -7
+  },
+  {
+   "station": "38-053-0002-1",
+   "place": "McKenzie, North Dakota",
+   "lat": 47.5812,
+   "lon": -103.2995,
+   "utc_offset_h": -7
+  },
+  {
+   "station": "38-101-0003-1",
+   "place": "Ward, North Dakota",
+   "lat": 47.940861,
+   "lon": -101.571583,
+   "utc_offset_h": -6
+  },
+  {
+   "station": "49-013-7011-1",
+   "place": "Duchesne, Utah",
+   "lat": 40.216779,
+   "lon": -110.182742,
+   "utc_offset_h": -7
+  }
+ ]
+}
