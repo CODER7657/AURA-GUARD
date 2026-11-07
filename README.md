@@ -1,6 +1,5 @@
 # AURA-GUARD: NO₂ forecasts you can check
 
-> Built for the **NASA Space Apps Challenge 2025**, Problem Statement 9: Air Quality Forecasting.
 
 [![ml tests](https://github.com/CODER7657/AURA-GUARD/actions/workflows/ml-tests.yml/badge.svg)](https://github.com/CODER7657/AURA-GUARD/actions/workflows/ml-tests.yml)
 [![ml monitor](https://github.com/CODER7657/AURA-GUARD/actions/workflows/ml-monitor.yml/badge.svg)](https://github.com/CODER7657/AURA-GUARD/actions/workflows/ml-monitor.yml)
