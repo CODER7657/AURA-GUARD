@@ -442,3 +442,5 @@ site/
 !ml/eval/*.json
 # EPA downloads stay local
 ml/data/
+ml/.venv/
+ml/live/
