@@ -12,6 +12,7 @@ plausible values only, enough recent hours per station, and data that is actuall
 from __future__ import annotations
 
 import json
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
@@ -35,8 +36,12 @@ def site_key_of_aqs(code: str) -> str | None:
     return f"{digits[:2]}-{digits[2:5]}-{digits[5:]}"
 
 
-def fetch(api_key: str, start: pd.Timestamp, end: pd.Timestamp, bbox: str = US_BBOX, timeout: float = 60) -> list[dict]:
-    """Hourly NO2 concentrations between two UTC hours. The key is never logged."""
+def _redact(text: str, secret: str) -> str:
+    return text.replace(secret, "***") if secret else text
+
+
+def fetch_window(api_key: str, start: pd.Timestamp, end: pd.Timestamp, bbox: str = US_BBOX, timeout: float = 60) -> list[dict]:
+    """Hourly NO2 concentrations from ``start`` to ``end`` (UTC hours, inclusive). The key never appears in errors."""
     params = {
         "startDate": start.strftime("%Y-%m-%dT%H"),
         "endDate": end.strftime("%Y-%m-%dT%H"),
@@ -50,11 +55,27 @@ def fetch(api_key: str, start: pd.Timestamp, end: pd.Timestamp, bbox: str = US_B
         "API_KEY": api_key,
     }
     req = urllib.request.Request(f"{API}?{urllib.parse.urlencode(params)}", headers={"User-Agent": "aura-guard/1.0"})
-    with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310 - fixed https host
-        data = json.loads(r.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310 - fixed https host
+            body = r.read().decode("utf-8")
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", "replace")[:300] if e.fp else ""
+        raise RuntimeError(_redact(f"AirNow HTTP {e.code} for {params['startDate']}..{params['endDate']}: {detail}", api_key)) from None
+    data = json.loads(body)
     if not isinstance(data, list):
-        raise ValueError(f"unexpected AirNow response: {str(data)[:200]}")
+        raise ValueError(_redact(f"unexpected AirNow response: {str(data)[:200]}", api_key))
     return data
+
+
+def fetch(api_key: str, start: pd.Timestamp, end: pd.Timestamp, window_h: int = 24, **kw) -> list[dict]:
+    """Like fetch_window, in windows of ``window_h`` hours, so no single query is large."""
+    out: list[dict] = []
+    t = start
+    while t <= end:
+        stop = min(t + pd.Timedelta(hours=window_h - 1), end)
+        out.extend(fetch_window(api_key, t, stop, **kw))
+        t = stop + pd.Timedelta(hours=1)
+    return out
 
 
 def to_hourly(records: list[dict], stations: pd.DataFrame) -> pd.DataFrame:

@@ -140,3 +140,29 @@ def test_write_is_atomic(tmp_path):
     live.write_atomic(out, {"a": 1})
     assert json.loads(out.read_text()) == {"a": 1}
     assert not list(out.parent.glob("*.tmp"))
+
+
+# ---------- fetching ----------
+
+def test_fetch_splits_into_windows_without_gaps(monkeypatch):
+    calls = []
+    monkeypatch.setattr(airnow, "fetch_window", lambda key, a, b, **kw: calls.append((a, b)) or [{"a": 1}])
+    out = airnow.fetch("k", NOW - pd.Timedelta(hours=72), NOW)
+    assert len(out) == len(calls) == 4
+    assert calls[0][0] == NOW - pd.Timedelta(hours=72) and calls[-1][1] == NOW
+    for (a1, b1), (a2, _) in zip(calls, calls[1:]):
+        assert a2 == b1 + pd.Timedelta(hours=1)
+
+
+def test_http_errors_carry_the_reason_but_never_the_key(monkeypatch):
+    import io as _io
+    import urllib.error
+
+    def boom(req, timeout):
+        raise urllib.error.HTTPError(req.full_url, 400, "Bad Request", {}, _io.BytesIO(b"Invalid API key SECRET123"))
+
+    monkeypatch.setattr(airnow.urllib.request, "urlopen", boom)
+    with pytest.raises(RuntimeError) as e:
+        airnow.fetch_window("SECRET123", NOW - pd.Timedelta(hours=1), NOW)
+    assert "HTTP 400" in str(e.value) and "Invalid API key" in str(e.value)
+    assert "SECRET123" not in str(e.value)
