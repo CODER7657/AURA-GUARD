@@ -1,6 +1,5 @@
 # AURA-GUARD: NO₂ forecasts you can check
 
-
 [![ml tests](https://github.com/CODER7657/AURA-GUARD/actions/workflows/ml-tests.yml/badge.svg)](https://github.com/CODER7657/AURA-GUARD/actions/workflows/ml-tests.yml)
 [![ml monitor](https://github.com/CODER7657/AURA-GUARD/actions/workflows/ml-monitor.yml/badge.svg)](https://github.com/CODER7657/AURA-GUARD/actions/workflows/ml-monitor.yml)
 [![Open backtest in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CODER7657/AURA-GUARD/blob/master/ml/notebooks/backtest_colab.ipynb)
