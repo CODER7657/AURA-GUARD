@@ -1,2 +1,4 @@
 test/
 package.json
+.env*
+.gitignore
