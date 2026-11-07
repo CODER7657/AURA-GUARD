@@ -77,3 +77,8 @@ jobs:
           if [ "${{ steps.forecast.outputs.code }}" = "2" ]; then
             echo "::warning::No station passed the data contract this hour; the last published forecast stays up."
           fi
+      # Alarm: fail the job (so GitHub emails the owner) when what the site reads is more
+      # than 3 hours old. Scheduled and manual runs only; the PR dry run publishes nothing.
+      - name: stale forecast alarm
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: python ml/scripts/check_forecast_age.py --max-age-hours 3
