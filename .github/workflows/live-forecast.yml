@@ -81,4 +81,8 @@ jobs:
       # than 3 hours old. Scheduled and manual runs only; the PR dry run publishes nothing.
       - name: stale forecast alarm
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        run: python ml/scripts/check_forecast_age.py --max-age-hours 3
+        # The publish step switched the work tree to the live-data branch, which has no
+        # scripts: take the checker from the commit this workflow runs at.
+        run: |
+          git show "${{ github.sha }}:ml/scripts/check_forecast_age.py" > "$RUNNER_TEMP/check_forecast_age.py"
+          python "$RUNNER_TEMP/check_forecast_age.py" --max-age-hours 3
