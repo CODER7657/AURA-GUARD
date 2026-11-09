@@ -27,8 +27,8 @@ python -m auraguard.agent "Will NO2 be high near Chicago tomorrow morning?"
 
 **Live:** [aura-guard-live.vercel.app](https://aura-guard-live.vercel.app), refreshed every hour from EPA AirNow.
 
-The live forecasts are published to [`ml/live/forecasts.json` on the `live-data` branch](https://github.com/CODER7657/AURA-GUARD/blob/live-data/ml/live/forecasts.json);
-the API serves the backtest-era file [`ml/results/forecasts.json`](ml/results/forecasts.json).
+The live forecasts are published to [`ml/live/forecasts.json` on the `live-data` branch](https://github.com/CODER7657/AURA-GUARD/blob/live-data/ml/live/forecasts.json),
+which the site reads.
 Method, every number and the limitations: [`ml/README.md`](ml/README.md).
 
 ## What is real, and what is not yet
@@ -37,11 +37,8 @@ Method, every number and the limitations: [`ml/README.md`](ml/README.md).
 |---|---|
 | NO₂ forecaster ([`ml/`](ml/README.md)) | **Real.** Gradient boosting trained on EPA AirData hourly NO₂ from 20 monitors, 2024; walk-forward backtest, then checked on all of 2025 |
 | Live NO₂ forecasts ([site](https://aura-guard-live.vercel.app)) | **Real and live.** An hourly GitHub Actions job pulls the last 72 h of AirNow NO₂, applies a data contract (plausible values, at least 12 of the last 24 h, no more than 6 h stale), runs the deployed model and publishes 1/6/12/24 h forecasts with 90% intervals to the `live-data` branch. A static page on Vercel reads that file. AirNow data is preliminary |
-| NO₂ forecasts in the API and React dashboard | **Real model output, not live.** Issued from the last hour of the newest EPA file (March or April 2026), 17 of 20 stations; every response says when |
-| Forecast analyst (`POST /api/v1/predictions/ask`, CLI) | **Real.** An LLM limited to five forecast tools, with a deterministic grounding check on every answer |
+| Forecast analyst (CLI, `python -m auraguard.agent`) | **Real.** An LLM limited to five forecast tools, with a deterministic grounding check on every answer |
 | Weekly monitoring | **Real.** A GitHub Actions job re-scores the model on the newest public EPA data and fails below fixed thresholds |
-| Current readings | **Real when configured.** EPA AirNow, with an AirNow API key |
-| AQI / PM2.5 forecasts in `/predictions/realtime` and `/forecast` | **Simulated.** Current reading plus random variation; responses say so in `aqi_forecast_simulated` |
 | NASA TEMPO satellite data | **Not integrated yet.** It needs a NASA Earthdata account |
 
 An earlier version of this README reported "86.98% accuracy" and "1.7 ms inference"
@@ -108,22 +105,22 @@ Groq's free tier, rate-limit waits push it to 33 s. Full report:
 
 ## System architecture
 
-The LLM sits inside the dashed box. Everything outside it is deterministic.
+Everything runs from `ml/` and GitHub Actions; the site is static. The LLM sits inside the
+dashed box; everything outside it is deterministic.
 
 ```mermaid
 flowchart LR
-  EPA[("EPA AirData<br/>hourly NO2 files")] --> TRAIN["deploy_forecaster.py<br/>4 gradient-boosting models<br/>+ conformal intervals"]
+  AIRDATA[("EPA AirData<br/>hourly NO2 files")] --> TRAIN["deploy_forecaster.py<br/>4 gradient-boosting models<br/>+ conformal intervals"]
   TRAIN --> MODEL[("models/no2_gbm.joblib")]
-  MODEL --> FC[("results/forecasts.json")]
-  EPA --> FC
-  MODEL --> MON["monitor.py<br/>weekly CI check"]
-  EPA --> MON
-  MON --> SKILL[("backtest and<br/>2025 results")]
-  FC --> API["Node.js API<br/>/predictions/no2/*"]
-  API --> UI["React dashboard"]
-  AIRNOW["EPA AirNow<br/>current readings"] --> API
+  AIRNOW["EPA AirNow<br/>last 72 h"] --> LIVE["live-forecast.yml, hourly<br/>data contract, then forecast"]
+  MODEL --> LIVE
+  LIVE --> DATA[("live-data branch<br/>forecasts.json + history")]
+  DATA --> SITE["static site<br/>aura-guard-live.vercel.app"]
+  DATA --> ALARM["stale-forecast alarm<br/>fails the job after 3 h"]
+  AIRDATA --> MON["ml-monitor.yml, weekly<br/>re-scores the model"]
+  MODEL --> MON
 
-  subgraph AGENT ["Forecast analyst"]
+  subgraph AGENT ["Forecast analyst (CLI)"]
     direction TB
     TOOLS["5 typed tools<br/>read-only"]
     subgraph LLMZONE ["LLM allowed here only"]
@@ -138,12 +135,7 @@ flowchart LR
     CHECK -- "fail twice" --> TPL
   end
 
-  FC --> TOOLS
-  SKILL --> TOOLS
-  API -- "POST /predictions/ask" --> AGENT
-  CHECK -- pass --> API
-  TPL --> API
-
+  MODEL --> TOOLS
   style LLMZONE stroke-dasharray: 5 5
 ```
 
@@ -152,232 +144,47 @@ call the network, or decide whether its own answer is grounded.
 
 ## Technology stack
 
-- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS
-- **Backend:** Node.js, Express, PostgreSQL, Redis
-- **Forecasting:** Python, pandas, scikit-learn (gradient boosting, ridge), split-conformal prediction intervals
-- **Agent:** `openai/gpt-oss-120b` on Groq (OpenAI-compatible API, tool calling), standard-library Python client, deterministic checker
-- **Data:** EPA AirData (training, backtest, served forecasts, monitoring), EPA AirNow (current readings)
-- **CI:** GitHub Actions: offline tests on every change, weekly model monitor
+- **Forecaster and agent:** Python 3.10+ (CI on 3.11 and 3.12), scikit-learn gradient boosting with split-conformal
+  intervals, pandas; the agent uses Groq (`openai/gpt-oss-120b`) through tools only.
+- **Live pipeline:** GitHub Actions (hourly forecast, weekly monitor), triggered hourly by an
+  external cron with a fine-grained token; results committed to the `live-data` branch.
+- **Site:** static HTML and JavaScript on Vercel, reading the published JSON.
 
-More detail: [TECH_STACK.md](TECH_STACK.md).
+## Run it locally
 
-## Running the full app
-
-### Prerequisites
-
-- Node.js 18.0+ (recommended: 22.17.0)
-- Python 3.10+ (for AI/ML components)
-- PostgreSQL database
-- Redis server
-
-### Installation
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/CODER7657/AURA-GUARD.git
-   cd AURA-GUARD
-   ```
-
-2. **Backend Setup**
-   ```bash
-   cd backend
-   npm install
-   cp .env.example .env
-   # Configure your environment variables in .env
-   npm start
-   ```
-
-3. **Frontend Setup**
-   ```bash
-   cd frontend
-   npm install
-   cp .env.example .env.local
-   # Configure your environment variables in .env.local
-   npm run dev
-   ```
-
-4. **Forecaster and agent**
-   ```bash
-   cd ml
-   pip install -e ".[dev]"
-   cp .env.example .env      # GROQ_API_KEY, only needed for the agent
-   pytest
-   ```
-   The backend reads `ml/results/forecasts.json` directly. For `POST /predictions/ask`
-   set `AURAGUARD_PYTHON` in `backend/.env` to the Python that has the `ml` package.
-
-### Environment Configuration
-
-Create `.env` files with your API keys:
-
-**Backend (.env)**
 ```bash
-NODE_ENV=development
-PORT=3000
+cd ml
+pip install -e ".[dev]"
+pytest                                        # offline: no data, key or network
+python scripts/run_backtest.py --help         # reproduce the backtest (downloads EPA files)
+python -m auraguard.agent "Will NO2 be high near Chicago tomorrow morning?"   # needs GROQ_API_KEY
 
-# Database
-
-POSTGRESQL_URI=your_postgresql_connection_string
-SUPABASE_URL=your_supabase_url
-SUPABASE_API_KEY=your_supabase_api_key
-
-# Redis
-
-UPSTASH_REDIS_REST_URL=your_redis_url
-UPSTASH_REDIS_REST_TOKEN=your_redis_token
-
-# API Keys
-
-TEMPO_API_KEY=your_tempo_api_key
-AIRNOW_API_KEY=your_airnow_api_key
-OPENWEATHERMAP_API_KEY=your_openweather_api_key
-
-# Authentication
-
-JWT_SECRET=your_jwt_secret_key
-JWT_REFRESH_SECRET=your_refresh_token_secret
-
-# Python with the ml package, for the forecast analyst endpoint
-AURAGUARD_PYTHON=python
+cd ../site && npm test                        # the site's data handling
 ```
 
-**Forecast analyst (ml/.env, git-ignored)**
-```bash
-GROQ_API_KEY=your_groq_api_key
-```
+[`ml/README.md`](ml/README.md) has every script, the data sources and the full results.
 
-**Frontend (.env.local)**
-```bash
-VITE_API_BASE_URL=http://localhost:3000/api/v1
-VITE_NASA_API_KEY=your_nasa_api_key
-VITE_OPENWEATHER_API_KEY=your_openweather_api_key
-VITE_DEBUG_MODE=true
-```
-
----
-
-## Project Structure
+## Project structure
 
 ```
-AURA-GUARD/
-├── frontend/          React dashboard
-├── backend/           Express API (routes, services, models, middleware)
-├── ml/                NO2 forecaster: data loading, features, models, backtest, serving
-│   ├── src/auraguard/agent/  Forecast analyst: tools, scope rules, checker, LLM client
-│   ├── models/        The deployed model bundle (no2_gbm.joblib)
-│   ├── eval/          Pre-registered agent eval questions
-│   ├── notebooks/     Colab notebook that runs the full backtest
-│   ├── results/       forecasts.json, backtest, 2025 check, agent eval, model_performance.json
-│   └── tests/         Offline tests: no data download, no key, no network
-├── ai-int/models/     Older Python bridge, still simulated and no longer used for NO2
-├── TECH_STACK.md
-└── README.md
+ml/                  forecaster, live pipeline, agent, monitor, tests (see ml/README.md)
+site/                the live page: reads live-data/ml/live/forecasts.json
+.github/workflows/   live-forecast (hourly), ml-monitor (weekly), ml-tests, site
 ```
 
----
-
-## API Documentation
-
-### Core Endpoints
-
-#### **Real-time Predictions**
-```http
-POST /api/v1/predictions/realtime
-Content-Type: application/json
-
-{
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "forecast_hours": 1
-}
-```
-
-#### **Extended Forecasting**
-```http
-POST /api/v1/predictions/forecast
-Content-Type: application/json
-
-{
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "duration": 48
-}
-```
-
-Both return a simulated AQI forecast beyond 1 hour (`aqi_forecast_simulated: true`).
-`/realtime` also returns `no2_forecast`: the real NO2 model forecast at the nearest
-monitor within 80 km, or `null`.
-
-#### **NO2 model forecasts**
-Real model output from `ml/results/forecasts.json`, issued from the last hour of the
-newest EPA file (not live).
-```http
-GET /api/v1/predictions/no2/stations
-GET /api/v1/predictions/no2/forecast?station=17-031-3103-1
-GET /api/v1/predictions/no2/forecast?latitude=41.88&longitude=-87.63
-```
-
-#### **Forecast analyst**
-```http
-POST /api/v1/predictions/ask
-Content-Type: application/json
-
-{ "question": "Will NO2 be high near Chicago tomorrow morning?" }
-```
-Returns the answer, whether it came from the first draft, the retry or the template
-fallback, whether it passed the grounding check, and the tool calls made.
-
-#### **Model Performance**
-Returns the measured backtest and 2025 results from `ml/results/model_performance.json`.
-```http
-GET /api/v1/predictions/accuracy
-```
-
-#### **System Health**
-```http
-GET /api/v1/health/detailed
-```
-
----
-
-## Security Features
-
-- **🔐 JWT Authentication**: Secure user authentication with refresh tokens
-- **🛡️ Rate Limiting**: API abuse prevention with configurable limits
-- **🌐 CORS Protection**: Cross-origin request security
-- **🔒 Input Validation**: Comprehensive data sanitization
-- **🗄️ SQL Injection Prevention**: Parameterized database queries
-- **🔑 Environment Variables**: Secure configuration management
-
----
-
-## Contributing
-
-We welcome contributions to AURA-GUARD! Here's how to get started:
-
-### Development Guidelines
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Code Standards
-
-- **Frontend**: ESLint + Prettier with TypeScript strict mode
-- **Backend**: ESLint with Airbnb configuration
-- **AI/ML**: PEP 8 Python style guide
-- **Testing**: Jest for JavaScript, pytest for Python
-
----
-
+The 2025 prototype (a React dashboard and Node API, whose AQI forecasts were simulated) is
+not part of what runs. It was removed from this branch and is kept at the tag
+[`prototype-2025`](https://github.com/CODER7657/AURA-GUARD/tree/prototype-2025).
 
 ## Roadmap
 
-1. **Score the live forecasts.** Each hourly run is appended to `ml/live/history/` on `live-data`; compare them with the readings that followed, then point the API at the live file and replace the simulated AQI forecasts.
-2. **Per-station intervals.** Calibrate the 90% interval per station; the shared width under-covers the busiest monitor.
-3. **Add NASA TEMPO.** Use TEMPO NO₂ columns (NASA Earthdata) as an extra feature and measure whether they improve the backtest.
+1. **Score the live forecasts.** Each hourly run is appended to `ml/live/history/` on
+   `live-data`; compare them with the readings that followed and publish MAE against
+   persistence on the site.
+2. **Per-station intervals.** Calibrate the 90% interval per station; the shared width
+   under-covers the busiest monitor.
+3. **Add NASA TEMPO.** Use TEMPO NO₂ columns (NASA Earthdata) as an extra feature and
+   measure whether they improve the backtest.
 4. **More data.** More monitors, more years, and weather inputs (wind, boundary-layer height).
 
 ## License

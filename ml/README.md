@@ -170,8 +170,6 @@ python -m auraguard.agent "Will NO2 be high near Chicago tomorrow morning?"
 python -m auraguard.agent --json "How sure are you about the 6 hour forecast?"   # full trace
 ```
 
-The backend exposes the same thing as `POST /api/v1/predictions/ask`.
-
 ## Agent eval
 
 Run `python scripts/run_agent_eval.py` then `python scripts/agent_eval_report.py`.
@@ -246,7 +244,6 @@ python scripts/deploy_forecaster.py --train data/hourly_42602_2024.zip \
     --latest data/hourly_42602_2026.zip                                      # model and forecasts.json
 python scripts/monitor.py --data data/hourly_42602_2025.zip --days 0 \
     --out results/monitor_2025.json                                          # out-of-time check
-python scripts/export_app_metrics.py                                         # file the backend serves
 python scripts/run_agent_eval.py && python scripts/agent_eval_report.py      # agent eval, needs a key
 ```
 
