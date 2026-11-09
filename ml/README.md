@@ -170,7 +170,6 @@ python -m auraguard.agent "Will NO2 be high near Chicago tomorrow morning?"
 python -m auraguard.agent --json "How sure are you about the 6 hour forecast?"   # full trace
 ```
 
-
 ## Agent eval
 
 Run `python scripts/run_agent_eval.py` then `python scripts/agent_eval_report.py`.
