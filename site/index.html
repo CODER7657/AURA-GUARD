@@ -90,6 +90,11 @@
   .card h2 { font-size: 15px; margin: 0 0 10px; }
   .card p, .card li { color: var(--muted); font-size: 14px; }
   .card ul { margin: 0; padding-left: 18px; }
+  .card.wide { grid-column: 1 / -1; }
+  table.score { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.score th, table.score td { text-align: left; padding: 6px 8px; border-top: 1px solid var(--line); }
+  table.score th { color: var(--muted); font-weight: 500; }
+  @media (max-width: 560px) { table.score th:nth-child(2), table.score td:nth-child(2) { display: none; } }
   .card p { margin: 0 0 8px; }
   .kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; font-size: 14px; margin: 0; }
   .kv dt { color: var(--faint); }
@@ -179,6 +184,14 @@
       <ul id="excluded"><li>Loading…</li></ul>
       <h2 style="margin-top:16px">Model</h2>
       <dl class="kv" id="model"></dl>
+    </div>
+    <div class="card wide" id="scoring">
+      <h2>How the live forecast did yesterday</h2>
+      <p id="score-note">Each forecast is compared with the reading AirNow later reported for its hour, next to persistence (the next reading equals the last one).</p>
+      <table class="score" aria-label="Live forecast error by horizon">
+        <thead><tr><th scope="col">Horizon</th><th scope="col">Scored</th><th scope="col">Model error (MAE)</th><th scope="col">Persistence</th><th scope="col">Result</th></tr></thead>
+        <tbody id="score-rows"><tr><td colspan="5">Loading…</td></tr></tbody>
+      </table>
     </div>
   </section>
 </main>

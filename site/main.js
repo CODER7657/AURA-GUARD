@@ -1,4 +1,5 @@
 import {
+  SCORE_SOURCE, scoreRows,
   SOURCE, STALE_AFTER_H, ageHours, ageLabel, axisMax, categorySlug, localLabel, notForecast, pct,
   rowsFor, stateOf, validateDoc,
 } from "./lib.js";
@@ -116,6 +117,21 @@ function renderSide(doc) {
   $("model").replaceChildren(...kv.filter(([, v]) => v).flatMap(([k, v]) => [el("dt", {}, k), el("dd", {}, String(v))]));
 }
 
+async function loadScore() {
+  try {
+    const r = await fetch(`${SCORE_SOURCE}?t=${Math.floor(Date.now() / 60000)}`, { cache: "no-store" });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const rows = scoreRows(await r.json());
+    if (!rows.length) throw new Error("nothing scored yet");
+    $("score-rows").replaceChildren(...rows.map((row) => el("tr", {},
+      el("td", {}, row.horizon), el("td", {}, String(row.scored)), el("td", {}, row.model),
+      el("td", {}, row.persistence), el("td", {}, row.verdict))));
+  } catch {
+    $("score-rows").replaceChildren(el("tr", {}, el("td", { colspan: "5" },
+      "Scores appear once a full day of live forecasts has been checked against the readings.")));
+  }
+}
+
 function render() {
   const doc = state.doc;
   renderStatus(doc);
@@ -150,5 +166,6 @@ $("state").addEventListener("change", (e) => {
 });
 
 load();
+loadScore();
 setInterval(() => { if (document.visibilityState === "visible") load(); }, REFRESH_MS);
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && state.doc) load(); });

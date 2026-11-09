@@ -38,6 +38,7 @@ Method, every number and the limitations: [`ml/README.md`](ml/README.md).
 | NO₂ forecaster ([`ml/`](ml/README.md)) | **Real.** Gradient boosting trained on EPA AirData hourly NO₂ from 20 monitors, 2024; walk-forward backtest, then checked on all of 2025 |
 | Live NO₂ forecasts ([site](https://aura-guard-live.vercel.app)) | **Real and live.** An hourly GitHub Actions job pulls the last 72 h of AirNow NO₂, applies a data contract (plausible values, at least 12 of the last 24 h, no more than 6 h stale), runs the deployed model and publishes 1/6/12/24 h forecasts with 90% intervals to the `live-data` branch. A static page on Vercel reads that file. AirNow data is preliminary |
 | Forecast analyst (CLI, `python -m auraguard.agent`) | **Real.** An LLM limited to five forecast tools, with a deterministic grounding check on every answer |
+| Live scoring | **Real.** Every hour the job scores past live forecasts against the readings AirNow later reported, against persistence; the site shows yesterday's MAE per horizon (`ml/live/score.json`). A horizon with fewer than 20 scored forecasts says so instead of claiming a result |
 | Weekly monitoring | **Real.** A GitHub Actions job re-scores the model on the newest public EPA data and fails below fixed thresholds |
 | NASA TEMPO satellite data | **Not integrated yet.** It needs a NASA Earthdata account |
 
@@ -178,14 +179,11 @@ not part of what runs. It was removed from this branch and is kept at the tag
 
 ## Roadmap
 
-1. **Score the live forecasts.** Each hourly run is appended to `ml/live/history/` on
-   `live-data`; compare them with the readings that followed and publish MAE against
-   persistence on the site.
-2. **Per-station intervals.** Calibrate the 90% interval per station; the shared width
+1. **Per-station intervals.** Calibrate the 90% interval per station; the shared width
    under-covers the busiest monitor.
-3. **Add NASA TEMPO.** Use TEMPO NO₂ columns (NASA Earthdata) as an extra feature and
+2. **Add NASA TEMPO.** Use TEMPO NO₂ columns (NASA Earthdata) as an extra feature and
    measure whether they improve the backtest.
-4. **More data.** More monitors, more years, and weather inputs (wind, boundary-layer height).
+3. **More data.** More monitors, more years, and weather inputs (wind, boundary-layer height).
 
 ## License
 
