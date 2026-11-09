@@ -84,3 +84,34 @@ test("notForecast lists every excluded station with its reason", () => {
   ]);
   assert.deepEqual(notForecast({}), []);
 });
+
+import { MIN_SCORED, SCORE_SOURCE, scoreRows } from "../lib.js";
+
+const scoreDoc = {
+  windows: {
+    yesterday: {
+      horizons: [
+        { horizon_h: 1, n: 97, mae_ppb: 1.24, persistence_mae_ppb: 1.39 },
+        { horizon_h: 12, n: 12, mae_ppb: 1.59, persistence_mae_ppb: 5.97 },
+        { horizon_h: 24, n: 33, mae_ppb: 3.6, persistence_mae_ppb: 3.43 },
+        { horizon_h: 6, n: 0, mae_ppb: null, persistence_mae_ppb: null },
+      ],
+    },
+  },
+};
+
+test("score rows compare with persistence and never claim a win on a few points", () => {
+  const [h1, h12, h24, h6] = scoreRows(scoreDoc);
+  assert.equal(h1.verdict, "11% lower error");
+  assert.equal(h1.model, "1.24 ppb");
+  assert.ok(12 < MIN_SCORED);
+  assert.equal(h12.verdict, "too few to judge");
+  assert.equal(h24.verdict, "no better");
+  assert.deepEqual([h6.model, h6.verdict], ["–", "too few to judge"]);
+});
+
+test("score rows tolerate a missing or malformed file", () => {
+  assert.deepEqual(scoreRows(null), []);
+  assert.deepEqual(scoreRows({ windows: {} }), []);
+  assert.ok(SCORE_SOURCE.endsWith("/live-data/ml/live/score.json"));
+});

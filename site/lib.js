@@ -106,3 +106,29 @@ export function notForecast(doc) {
     ...(c.stations_sparse ?? []).map((s) => [s, "too few hours in the last day"]),
   ];
 }
+
+// Live scoring (ml/scripts/score_live.py, published hourly next to the forecasts).
+export const SCORE_SOURCE = SOURCE.replace("forecasts.json", "score.json");
+export const MIN_SCORED = 20; // fewer than this and a comparison says nothing
+
+// One row per horizon: what the model's error was against the readings that followed,
+// next to persistence ("the next reading equals this one"). Never claims a win on a few points.
+export function scoreRows(scoreDoc, window = "yesterday") {
+  const horizons = scoreDoc?.windows?.[window]?.horizons;
+  if (!Array.isArray(horizons)) return [];
+  return horizons.map((h) => {
+    const judged = h.n >= MIN_SCORED && h.mae_ppb != null && h.persistence_mae_ppb != null;
+    const better = judged && h.mae_ppb < h.persistence_mae_ppb;
+    const pctLower = judged && h.persistence_mae_ppb > 0
+      ? Math.round(100 * (1 - h.mae_ppb / h.persistence_mae_ppb)) : null;
+    return {
+      horizon: `${h.horizon_h} h`,
+      scored: h.n,
+      model: h.mae_ppb == null ? "–" : `${h.mae_ppb.toFixed(2)} ppb`,
+      persistence: h.persistence_mae_ppb == null ? "–" : `${h.persistence_mae_ppb.toFixed(2)} ppb`,
+      verdict: !judged ? "too few to judge"
+        : better ? `${pctLower}% lower error`
+          : "no better",
+    };
+  });
+}
