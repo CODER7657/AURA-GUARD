@@ -20,7 +20,7 @@
  "units": "ppb",
  "data_contract": {
   "now_utc": "2026-11-10 10:00",
-  "rows_in": 1200,
+  "rows_in": 1201,
   "rows_out_of_range": 0,
   "stations_ok": [
    "04-013-3002-6",
@@ -389,45 +389,45 @@
   },
   {
    "station": "20-133-0003-1",
-   "issued_at_utc": "2026-11-10 08:00",
+   "issued_at_utc": "2026-11-10 09:00",
    "utc_offset_h": -6,
-   "last_reading_ppb": 4.6,
-   "hours_behind_file_end": 1,
+   "last_reading_ppb": 3.8,
+   "hours_behind_file_end": 0,
    "forecasts": [
     {
      "horizon_h": 1,
-     "target_time_utc": "2026-11-10 09:00",
-     "target_time_local": "2026-11-10 03:00",
-     "no2_ppb": 4.9,
+     "target_time_utc": "2026-11-10 10:00",
+     "target_time_local": "2026-11-10 04:00",
+     "no2_ppb": 4.4,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 10.2,
+     "interval90_high_ppb": 9.6,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 6,
-     "target_time_utc": "2026-11-10 14:00",
-     "target_time_local": "2026-11-10 08:00",
-     "no2_ppb": 4.3,
+     "target_time_utc": "2026-11-10 15:00",
+     "target_time_local": "2026-11-10 09:00",
+     "no2_ppb": 3.0,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 15.3,
+     "interval90_high_ppb": 14.1,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 12,
-     "target_time_utc": "2026-11-10 20:00",
-     "target_time_local": "2026-11-10 14:00",
-     "no2_ppb": 1.8,
+     "target_time_utc": "2026-11-10 21:00",
+     "target_time_local": "2026-11-10 15:00",
+     "no2_ppb": 1.9,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 14.3,
+     "interval90_high_ppb": 14.4,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 24,
-     "target_time_utc": "2026-11-11 08:00",
-     "target_time_local": "2026-11-11 02:00",
-     "no2_ppb": 3.4,
+     "target_time_utc": "2026-11-11 09:00",
+     "target_time_local": "2026-11-11 03:00",
+     "no2_ppb": 3.5,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 16.3,
+     "interval90_high_ppb": 16.4,
      "aqi_category": "Good"
     }
    ],
