@@ -8,7 +8,7 @@
   "numpy": "2.3.3",
   "pandas": "2.3.2"
  },
- "issued_at_utc": "2026-11-10 03:00",
+ "issued_at_utc": "2026-11-10 04:00",
  "data_as_of_utc": "2026-11-10 02:00",
  "interval": "90% split-conformal",
  "horizons_h": [
@@ -19,8 +19,8 @@
  ],
  "units": "ppb",
  "data_contract": {
-  "now_utc": "2026-11-10 03:00",
-  "rows_in": 1201,
+  "now_utc": "2026-11-10 04:00",
+  "rows_in": 1184,
   "rows_out_of_range": 0,
   "stations_ok": [
    "04-013-3002-6",
