@@ -49,17 +49,40 @@ def read_history(files: Iterable[Path]) -> list[dict]:
             if not line.strip():
                 continue
             try:
-                runs.append(json.loads(line))
+                run = json.loads(line)
             except json.JSONDecodeError:
                 continue
+            if isinstance(run, dict):
+                runs.append(run)
     return runs
+
+
+def _stations(run: dict) -> Iterable[dict]:
+    """Station entries of a run that can be scored. The history is append-only, so one
+    malformed entry must be skipped, not raised on: it would fail every later run."""
+    stations = run.get("stations")
+    for s in stations if isinstance(stations, list) else []:
+        if isinstance(s, dict) and isinstance(s.get("station"), str) and isinstance(s.get("issued_at_utc"), str):
+            yield s
+
+
+def _forecast(f: object) -> tuple[int, str, datetime, float, float, float] | None:
+    """(horizon, target text, target time, forecast, low, high), or None if any part is unusable."""
+    try:
+        h, text = f["horizon_h"], f["target_time_utc"]  # type: ignore[index]
+        values = (f["no2_ppb"], f["interval90_low_ppb"], f["interval90_high_ppb"])  # type: ignore[index]
+        if not isinstance(h, int) or not all(isinstance(v, (int, float)) for v in values):
+            return None
+        return h, text, parse_utc(text), float(values[0]), float(values[1]), float(values[2])
+    except (KeyError, TypeError, ValueError):
+        return None
 
 
 def observations(runs: Iterable[dict]) -> dict[tuple[str, str], float]:
     """(station, hour UTC) -> NO2 ppb, from the reading each run was issued from."""
     obs: dict[tuple[str, str], float] = {}
     for run in runs:
-        for s in run.get("stations", []):
+        for s in _stations(run):
             value = s.get("last_reading_ppb")
             if isinstance(value, (int, float)):
                 obs[(s["station"], s["issued_at_utc"])] = float(value)
@@ -73,21 +96,23 @@ def score(runs: list[dict], start: datetime, end: datetime) -> list[HorizonScore
     seen: set[tuple[str, str, int]] = set()
     rows: dict[int, list[tuple[float, float, float, float, float] | None]] = {}
     for run in runs:
-        for s in run.get("stations", []):
+        for s in _stations(run):
             station, persisted = s["station"], s.get("last_reading_ppb")
-            for f in s.get("forecasts", []):
-                target = parse_utc(f["target_time_utc"])
-                key = (station, s["issued_at_utc"], f["horizon_h"])
+            forecasts = s.get("forecasts")
+            for f in forecasts if isinstance(forecasts, list) else []:
+                parsed = _forecast(f)
+                if parsed is None:
+                    continue
+                h, target_text, target, value, low, high = parsed
+                key = (station, s["issued_at_utc"], h)
                 if not (start <= target < end) or key in seen:
                     continue
                 seen.add(key)
-                actual = obs.get((station, f["target_time_utc"]))
+                actual = obs.get((station, target_text))
                 if actual is None or not isinstance(persisted, (int, float)):
-                    rows.setdefault(f["horizon_h"], []).append(None)
+                    rows.setdefault(h, []).append(None)
                     continue
-                rows.setdefault(f["horizon_h"], []).append(
-                    (f["no2_ppb"], float(persisted), actual, f["interval90_low_ppb"], f["interval90_high_ppb"])
-                )
+                rows.setdefault(h, []).append((value, float(persisted), actual, low, high))
     out = []
     for h in sorted(rows):
         scored = [r for r in rows[h] if r is not None]

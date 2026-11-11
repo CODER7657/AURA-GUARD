@@ -69,7 +69,9 @@ jobs:
           # This work tree is live-data, so the scorer comes from this workflow's commit.
           mkdir -p "$RUNNER_TEMP/code"
           git archive "${{ github.sha }}" ml/src/auraguard ml/scripts/score_live.py | tar -x -C "$RUNNER_TEMP/code"
-          PYTHONPATH="$RUNNER_TEMP/code/ml/src" python "$RUNNER_TEMP/code/ml/scripts/score_live.py"             --history ml/live/history --out ml/live/score.json
+          PYTHONPATH="$RUNNER_TEMP/code/ml/src" python "$RUNNER_TEMP/code/ml/scripts/score_live.py"             --history ml/live/history --out ml/live/score.json             || echo "::warning::scoring failed; the forecast is still published and the last score.json is kept"
+          # The scorer looks back 7 days; keep 35 daily files so the branch does not grow for ever.
+          ls ml/live/history/*.jsonl | sort | head -n -35 | xargs -r rm -f
           git add ml/live
           git commit -q -m "live forecast $(date -u +'%F %H:00') UTC" || { echo "nothing changed"; exit 0; }
           git push -q origin live-data

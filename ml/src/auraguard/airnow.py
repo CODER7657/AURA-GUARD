@@ -12,6 +12,7 @@ plausible values only, enough recent hours per station, and data that is actuall
 from __future__ import annotations
 
 import json
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -40,7 +41,11 @@ def _redact(text: str, secret: str) -> str:
     return text.replace(secret, "***") if secret else text
 
 
-def fetch_window(api_key: str, start: pd.Timestamp, end: pd.Timestamp, bbox: str = US_BBOX, timeout: float = 60) -> list[dict]:
+RETRIES = 3
+RETRY_WAIT_S = 5.0
+
+
+def fetch_window(api_key: str, start: pd.Timestamp, end: pd.Timestamp, bbox: str = US_BBOX, timeout: float = 60, sleep=time.sleep) -> list[dict]:
     """Hourly NO2 concentrations from ``start`` to ``end`` (UTC hours, inclusive). The key never appears in errors."""
     params = {
         "startDate": start.strftime("%Y-%m-%dT%H"),
@@ -55,12 +60,20 @@ def fetch_window(api_key: str, start: pd.Timestamp, end: pd.Timestamp, bbox: str
         "API_KEY": api_key,
     }
     req = urllib.request.Request(f"{API}?{urllib.parse.urlencode(params)}", headers={"User-Agent": "aura-guard/1.0"})
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310 - fixed https host
-            body = r.read().decode("utf-8")
-    except urllib.error.HTTPError as e:
-        detail = e.read().decode("utf-8", "replace")[:300] if e.fp else ""
-        raise RuntimeError(_redact(f"AirNow HTTP {e.code} for {params['startDate']}..{params['endDate']}: {detail}", api_key)) from None
+    for attempt in range(1, RETRIES + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310 - fixed https host
+                body = r.read().decode("utf-8")
+            break
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", "replace")[:300] if e.fp else ""
+            raise RuntimeError(_redact(f"AirNow HTTP {e.code} for {params['startDate']}..{params['endDate']}: {detail}", api_key)) from None
+        except (TimeoutError, urllib.error.URLError) as e:
+            # A slow or dropped connection is the usual reason an hourly run fails; try again.
+            if attempt == RETRIES:
+                reason = _redact(str(getattr(e, "reason", e)), api_key)
+                raise RuntimeError(f"AirNow did not answer after {RETRIES} attempts: {reason}") from None
+            sleep(RETRY_WAIT_S * attempt)
     data = json.loads(body)
     if not isinstance(data, list):
         raise ValueError(_redact(f"unexpected AirNow response: {str(data)[:200]}", api_key))

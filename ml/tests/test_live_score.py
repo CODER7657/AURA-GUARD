@@ -105,3 +105,29 @@ def test_script_writes_the_report(tmp_path):
     out = tmp_path / "score.json"
     assert mod.main(["--history", str(hist), "--out", str(out), "--now", "2026-11-09 01:00"]) == 0
     assert json.loads(out.read_text())["windows"]["yesterday"]["horizons"][0]["mae_ppb"] == 1.0
+
+
+def test_malformed_history_is_skipped_not_fatal(tmp_path):
+    good = run("2026-11-07 00:00", 10.0, [(1, "2026-11-07 01:00", 11.0, 8.0, 14.0)])
+    later = run("2026-11-07 01:00", 12.0, [])
+    broken = [
+        "[1, 2]",
+        '"text"',
+        "not json",
+        json.dumps({"stations": "x"}),
+        json.dumps({"stations": [5, {"station": 1}, {"station": "S1"}]}),
+        json.dumps({"stations": [{"station": "S1", "issued_at_utc": "2026-11-07 00:00", "forecasts": "x"}]}),
+        json.dumps({"stations": [{"station": "S2", "issued_at_utc": "2026-11-07 00:00", "last_reading_ppb": 1.0,
+                                  "forecasts": [3, {}, {"horizon_h": 1, "target_time_utc": "bad", "no2_ppb": 1,
+                                                        "interval90_low_ppb": 0, "interval90_high_ppb": 2},
+                                                {"horizon_h": 1, "target_time_utc": "2026-11-07 01:00",
+                                                 "no2_ppb": None, "interval90_low_ppb": 0, "interval90_high_ppb": 2}]}]}),
+    ]
+    path = tmp_path / "2026-11-07.jsonl"
+    path.write_text("\n".join([json.dumps(good), *broken, json.dumps(later)]), encoding="utf-8")
+    runs = ls.read_history([path])
+    assert all(isinstance(r, dict) for r in runs)
+    start = datetime(2026, 11, 7, tzinfo=timezone.utc)
+    end = datetime(2026, 11, 8, tzinfo=timezone.utc)
+    (h1,) = ls.score(runs, start, end)
+    assert (h1.horizon_h, h1.n, h1.mae_ppb) == (1, 1, 1.0)

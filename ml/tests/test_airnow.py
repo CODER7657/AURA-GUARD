@@ -171,3 +171,63 @@ def test_http_errors_carry_the_reason_but_never_the_key(monkeypatch):
         airnow.fetch_window("SECRET123", NOW - pd.Timedelta(hours=1), NOW)
     assert "HTTP 400" in str(e.value) and "Invalid API key" in str(e.value)
     assert "SECRET123" not in str(e.value)
+
+
+class _Reply:
+    def __init__(self, body: str):
+        self.body = body.encode()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def read(self):
+        return self.body
+
+
+def test_a_timeout_is_retried_and_then_succeeds(monkeypatch):
+    calls, waits = [], []
+
+    def flaky(req, timeout):
+        calls.append(1)
+        if len(calls) < 3:
+            raise TimeoutError("The read operation timed out")
+        return _Reply("[]")
+
+    monkeypatch.setattr(airnow.urllib.request, "urlopen", flaky)
+    assert airnow.fetch_window("k", NOW - pd.Timedelta(hours=1), NOW, sleep=waits.append) == []
+    assert len(calls) == 3 and waits == [airnow.RETRY_WAIT_S, 2 * airnow.RETRY_WAIT_S]
+
+
+def test_retries_are_bounded_and_the_error_never_carries_the_key(monkeypatch):
+    import urllib.error
+
+    calls = []
+
+    def down(req, timeout):
+        calls.append(1)
+        raise urllib.error.URLError(f"no route to {req.full_url}")
+
+    monkeypatch.setattr(airnow.urllib.request, "urlopen", down)
+    with pytest.raises(RuntimeError) as e:
+        airnow.fetch_window("SECRET123", NOW - pd.Timedelta(hours=1), NOW, sleep=lambda s: None)
+    assert len(calls) == airnow.RETRIES
+    assert "did not answer" in str(e.value) and "SECRET123" not in str(e.value)
+
+
+def test_an_http_error_is_not_retried(monkeypatch):
+    import io as _io
+    import urllib.error
+
+    calls = []
+
+    def boom(req, timeout):
+        calls.append(1)
+        raise urllib.error.HTTPError(req.full_url, 401, "Unauthorized", {}, _io.BytesIO(b"no"))
+
+    monkeypatch.setattr(airnow.urllib.request, "urlopen", boom)
+    with pytest.raises(RuntimeError):
+        airnow.fetch_window("k", NOW - pd.Timedelta(hours=1), NOW, sleep=lambda s: pytest.fail("slept"))
+    assert len(calls) == 1
