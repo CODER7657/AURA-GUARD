@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timezone
 
 import pytest
+
 from auraguard import live_score as ls
 
 

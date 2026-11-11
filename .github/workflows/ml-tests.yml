@@ -28,4 +28,7 @@ jobs:
           cache: pip
       # The tests build small synthetic series: no EPA download, no GPU.
       - run: pip install -e ".[dev]"
-      - run: pytest -q
+      - name: Lint
+        run: ruff check .
+      - name: Tests with coverage
+        run: pytest -q --cov --cov-report=term-missing:skip-covered

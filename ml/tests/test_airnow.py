@@ -155,7 +155,7 @@ def test_fetch_splits_into_windows_without_gaps(monkeypatch):
     out = airnow.fetch("k", NOW - pd.Timedelta(hours=72), NOW)
     assert len(out) == len(calls) == 4
     assert calls[0][0] == NOW - pd.Timedelta(hours=72) and calls[-1][1] == NOW
-    for (a1, b1), (a2, _) in zip(calls, calls[1:]):
+    for (_, b1), (a2, _) in zip(calls, calls[1:], strict=False):
         assert a2 == b1 + pd.Timedelta(hours=1)
 
 
