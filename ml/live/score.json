@@ -1,5 +1,5 @@
 {
- "scored_at_utc": "2026-11-11 17:32",
+ "scored_at_utc": "2026-11-11 18:01",
  "method": "Each forecast is compared with the reading AirNow later reported for its target hour; persistence predicts the reading the forecast was issued from.",
  "windows": {
   "yesterday": {
