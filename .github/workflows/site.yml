@@ -2,9 +2,9 @@ name: site
 on:
   push:
     branches: [master]
-    paths: ["site/**", ".github/workflows/site.yml"]
+    paths: ["site/**", ".github/workflows/site.yml", ".github/lighthouserc.yml"]
   pull_request:
-    paths: ["site/**", ".github/workflows/site.yml"]
+    paths: ["site/**", ".github/workflows/site.yml", ".github/lighthouserc.yml"]
 permissions:
   contents: read
 jobs:
@@ -19,3 +19,24 @@ jobs:
       - name: unit tests
         working-directory: site
         run: node --test
+
+  # Mobile Lighthouse on the static site. Accessibility (axe-core rules) and
+  # best practices may not drop below 95; performance below 80 fails.
+  lighthouse:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Lighthouse
+        run: npx --yes @lhci/cli@0.15 autorun --config=.github/lighthouserc.yml
+      - name: Keep the reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: .lighthouseci
+          include-hidden-files: true
+          retention-days: 7
