@@ -76,7 +76,7 @@ def forecast(bundle: dict, grid: pd.DataFrame, stations: pd.DataFrame | None = N
             continue
         pred = model.predict(rows.reset_index())
         q = bundle["halfwidth"][h]
-        for (station, row), p in zip(rows.iterrows(), pred):
+        for (station, row), p in zip(rows.iterrows(), pred, strict=True):
             offset = int(offsets[station])
             origin = pd.Timestamp(row["origin"])
             target = origin + pd.Timedelta(hours=h)

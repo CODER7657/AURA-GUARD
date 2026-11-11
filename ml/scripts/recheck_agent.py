@@ -33,7 +33,7 @@ def main() -> None:
         new = analyst.ask(q["question"])
         new["id"] = qid
 
-        def summary(r):
+        def summary(r, q=q):
             return {"answer": r["answer"], "source": r["source"], "grounded": r["grounded"],
                     "attempts": [{"passed": a["passed"], "issues": a["issues"], "answer": a["answer"]}
                                  for a in r["attempts"]],
