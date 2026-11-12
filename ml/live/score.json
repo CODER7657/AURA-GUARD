@@ -1,88 +1,88 @@
 {
- "scored_at_utc": "2026-11-11 23:32",
+ "scored_at_utc": "2026-11-12 00:01",
  "method": "Each forecast is compared with the reading AirNow later reported for its target hour; persistence predicts the reading the forecast was issued from.",
  "windows": {
   "yesterday": {
-   "from_utc": "2026-11-10 00:00",
-   "to_utc": "2026-11-11 00:00",
+   "from_utc": "2026-11-11 00:00",
+   "to_utc": "2026-11-12 00:00",
    "horizons": [
     {
      "horizon_h": 1,
-     "n": 369,
-     "unscored": 11,
-     "mae_ppb": 2.68,
-     "persistence_mae_ppb": 3.19,
-     "skill_vs_persistence": 0.159,
-     "interval90_coverage": 0.837
+     "n": 337,
+     "unscored": 40,
+     "mae_ppb": 2.49,
+     "persistence_mae_ppb": 2.87,
+     "skill_vs_persistence": 0.131,
+     "interval90_coverage": 0.866
     },
     {
      "horizon_h": 6,
-     "n": 361,
-     "unscored": 29,
-     "mae_ppb": 5.15,
-     "persistence_mae_ppb": 8.97,
-     "skill_vs_persistence": 0.427,
-     "interval90_coverage": 0.889
+     "n": 327,
+     "unscored": 41,
+     "mae_ppb": 5.23,
+     "persistence_mae_ppb": 9.55,
+     "skill_vs_persistence": 0.452,
+     "interval90_coverage": 0.887
     },
     {
      "horizon_h": 12,
-     "n": 364,
-     "unscored": 28,
-     "mae_ppb": 5.25,
-     "persistence_mae_ppb": 8.99,
-     "skill_vs_persistence": 0.416,
-     "interval90_coverage": 0.89
+     "n": 320,
+     "unscored": 44,
+     "mae_ppb": 5.88,
+     "persistence_mae_ppb": 11.43,
+     "skill_vs_persistence": 0.486,
+     "interval90_coverage": 0.875
     },
     {
      "horizon_h": 24,
-     "n": 354,
-     "unscored": 21,
-     "mae_ppb": 4.95,
-     "persistence_mae_ppb": 5.69,
-     "skill_vs_persistence": 0.13,
-     "interval90_coverage": 0.907
+     "n": 341,
+     "unscored": 38,
+     "mae_ppb": 4.67,
+     "persistence_mae_ppb": 4.41,
+     "skill_vs_persistence": -0.059,
+     "interval90_coverage": 0.906
     }
    ]
   },
   "last_7_days": {
-   "from_utc": "2026-11-04 00:00",
-   "to_utc": "2026-11-11 00:00",
+   "from_utc": "2026-11-05 00:00",
+   "to_utc": "2026-11-12 00:00",
    "horizons": [
     {
      "horizon_h": 1,
-     "n": 816,
-     "unscored": 163,
-     "mae_ppb": 2.21,
-     "persistence_mae_ppb": 2.57,
-     "skill_vs_persistence": 0.139,
-     "interval90_coverage": 0.881
+     "n": 1153,
+     "unscored": 203,
+     "mae_ppb": 2.3,
+     "persistence_mae_ppb": 2.66,
+     "skill_vs_persistence": 0.136,
+     "interval90_coverage": 0.877
     },
     {
      "horizon_h": 6,
-     "n": 748,
-     "unscored": 156,
-     "mae_ppb": 4.42,
-     "persistence_mae_ppb": 7.91,
-     "skill_vs_persistence": 0.441,
-     "interval90_coverage": 0.906
+     "n": 1075,
+     "unscored": 197,
+     "mae_ppb": 4.67,
+     "persistence_mae_ppb": 8.4,
+     "skill_vs_persistence": 0.445,
+     "interval90_coverage": 0.9
     },
     {
      "horizon_h": 12,
-     "n": 700,
-     "unscored": 110,
-     "mae_ppb": 4.61,
-     "persistence_mae_ppb": 7.81,
-     "skill_vs_persistence": 0.409,
-     "interval90_coverage": 0.914
+     "n": 1020,
+     "unscored": 154,
+     "mae_ppb": 5.01,
+     "persistence_mae_ppb": 8.95,
+     "skill_vs_persistence": 0.44,
+     "interval90_coverage": 0.902
     },
     {
      "horizon_h": 24,
-     "n": 539,
-     "unscored": 77,
-     "mae_ppb": 4.53,
-     "persistence_mae_ppb": 5.22,
-     "skill_vs_persistence": 0.133,
-     "interval90_coverage": 0.922
+     "n": 880,
+     "unscored": 115,
+     "mae_ppb": 4.58,
+     "persistence_mae_ppb": 4.91,
+     "skill_vs_persistence": 0.066,
+     "interval90_coverage": 0.916
     }
    ]
   }
