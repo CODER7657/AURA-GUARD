@@ -8,7 +8,7 @@
   "numpy": "2.3.3",
   "pandas": "2.3.2"
  },
- "issued_at_utc": "2026-11-19 21:00",
+ "issued_at_utc": "2026-11-19 22:00",
  "data_as_of_utc": "2026-11-19 20:00",
  "interval": "90% split-conformal",
  "horizons_h": [
@@ -19,8 +19,8 @@
  ],
  "units": "ppb",
  "data_contract": {
-  "now_utc": "2026-11-19 21:00",
-  "rows_in": 1213,
+  "now_utc": "2026-11-19 22:00",
+  "rows_in": 1196,
   "rows_out_of_range": 0,
   "stations_ok": [
    "04-013-3002-6",
@@ -34,7 +34,6 @@
    "29-095-0034-1",
    "29-189-0016-1",
    "29-510-0094-1",
-   "34-023-0011-2",
    "38-017-1004-1",
    "38-025-0004-1",
    "38-053-0002-1",
@@ -42,7 +41,9 @@
    "49-013-7011-1"
   ],
   "stations_sparse": [],
-  "stations_stale": [],
+  "stations_stale": [
+   "34-023-0011-2"
+  ],
   "stations_missing": [
    "06-065-5001-2",
    "17-031-0119-1",
@@ -578,54 +579,6 @@
    "place": "St. Louis City, Missouri",
    "lat": 38.63114,
    "lon": -90.28115
-  },
-  {
-   "station": "34-023-0011-2",
-   "issued_at_utc": "2026-11-19 15:00",
-   "utc_offset_h": -5,
-   "last_reading_ppb": 9.0,
-   "hours_behind_file_end": 5,
-   "forecasts": [
-    {
-     "horizon_h": 1,
-     "target_time_utc": "2026-11-19 16:00",
-     "target_time_local": "2026-11-19 11:00",
-     "no2_ppb": 7.5,
-     "interval90_low_ppb": 2.2,
-     "interval90_high_ppb": 12.7,
-     "aqi_category": "Good"
-    },
-    {
-     "horizon_h": 6,
-     "target_time_utc": "2026-11-19 21:00",
-     "target_time_local": "2026-11-19 16:00",
-     "no2_ppb": 10.2,
-     "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 21.2,
-     "aqi_category": "Good"
-    },
-    {
-     "horizon_h": 12,
-     "target_time_utc": "2026-11-20 03:00",
-     "target_time_local": "2026-11-19 22:00",
-     "no2_ppb": 9.3,
-     "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 21.7,
-     "aqi_category": "Good"
-    },
-    {
-     "horizon_h": 24,
-     "target_time_utc": "2026-11-20 15:00",
-     "target_time_local": "2026-11-20 10:00",
-     "no2_ppb": 8.9,
-     "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 21.8,
-     "aqi_category": "Good"
-    }
-   ],
-   "place": "Middlesex, New Jersey",
-   "lat": 40.462182,
-   "lon": -74.429439
   },
   {
    "station": "38-017-1004-1",
