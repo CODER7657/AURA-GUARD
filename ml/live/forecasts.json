@@ -8,7 +8,7 @@
   "numpy": "2.3.3",
   "pandas": "2.3.2"
  },
- "issued_at_utc": "2026-11-20 12:00",
+ "issued_at_utc": "2026-11-20 13:00",
  "data_as_of_utc": "2026-11-20 11:00",
  "interval": "90% split-conformal",
  "horizons_h": [
@@ -19,8 +19,8 @@
  ],
  "units": "ppb",
  "data_contract": {
-  "now_utc": "2026-11-20 12:00",
-  "rows_in": 1198,
+  "now_utc": "2026-11-20 13:00",
+  "rows_in": 1183,
   "rows_out_of_range": 0,
   "stations_ok": [
    "04-013-3002-6",
@@ -783,9 +783,9 @@
      "horizon_h": 1,
      "target_time_utc": "2026-11-20 12:00",
      "target_time_local": "2026-11-20 05:00",
-     "no2_ppb": 5.9,
-     "interval90_low_ppb": 0.6,
-     "interval90_high_ppb": 11.2,
+     "no2_ppb": 6.4,
+     "interval90_low_ppb": 1.2,
+     "interval90_high_ppb": 11.7,
      "aqi_category": "Good"
     },
     {
@@ -794,25 +794,25 @@
      "target_time_local": "2026-11-20 10:00",
      "no2_ppb": 5.1,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 16.2,
+     "interval90_high_ppb": 16.1,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 12,
      "target_time_utc": "2026-11-20 23:00",
      "target_time_local": "2026-11-20 16:00",
-     "no2_ppb": 4.9,
+     "no2_ppb": 4.8,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 17.3,
+     "interval90_high_ppb": 17.2,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 24,
      "target_time_utc": "2026-11-21 11:00",
      "target_time_local": "2026-11-21 04:00",
-     "no2_ppb": 6.1,
+     "no2_ppb": 6.4,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 19.0,
+     "interval90_high_ppb": 19.3,
      "aqi_category": "Good"
     }
    ],
