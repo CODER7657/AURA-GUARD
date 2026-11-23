@@ -9,7 +9,7 @@
   "pandas": "2.3.2"
  },
  "issued_at_utc": "2026-11-23 15:00",
- "data_as_of_utc": "2026-11-23 13:00",
+ "data_as_of_utc": "2026-11-23 14:00",
  "interval": "90% split-conformal",
  "horizons_h": [
   1,
@@ -20,7 +20,7 @@
  "units": "ppb",
  "data_contract": {
   "now_utc": "2026-11-23 15:00",
-  "rows_in": 1190,
+  "rows_in": 1194,
   "rows_out_of_range": 0,
   "stations_ok": [
    "04-013-3002-6",
@@ -48,7 +48,7 @@
    "17-031-0119-1",
    "17-031-3103-1"
   ],
-  "data_as_of_utc": "2026-11-23 13:00"
+  "data_as_of_utc": "2026-11-23 14:00"
  },
  "stations": [
   {
@@ -56,7 +56,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -7,
    "last_reading_ppb": 21.0,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -104,7 +104,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -8,
    "last_reading_ppb": 20.5,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -152,7 +152,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -8,
    "last_reading_ppb": 12.5,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -200,7 +200,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -8,
    "last_reading_ppb": 34.6,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -248,7 +248,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -8,
    "last_reading_ppb": 8.8,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -296,7 +296,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -8,
    "last_reading_ppb": 29.9,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -344,7 +344,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -8,
    "last_reading_ppb": 33.8,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -389,45 +389,45 @@
   },
   {
    "station": "20-133-0003-1",
-   "issued_at_utc": "2026-11-23 13:00",
+   "issued_at_utc": "2026-11-23 14:00",
    "utc_offset_h": -6,
-   "last_reading_ppb": 3.0,
+   "last_reading_ppb": 2.6,
    "hours_behind_file_end": 0,
    "forecasts": [
     {
      "horizon_h": 1,
-     "target_time_utc": "2026-11-23 14:00",
-     "target_time_local": "2026-11-23 08:00",
-     "no2_ppb": 2.8,
+     "target_time_utc": "2026-11-23 15:00",
+     "target_time_local": "2026-11-23 09:00",
+     "no2_ppb": 2.3,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 8.0,
+     "interval90_high_ppb": 7.6,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 6,
-     "target_time_utc": "2026-11-23 19:00",
-     "target_time_local": "2026-11-23 13:00",
-     "no2_ppb": 1.7,
+     "target_time_utc": "2026-11-23 20:00",
+     "target_time_local": "2026-11-23 14:00",
+     "no2_ppb": 1.6,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 12.7,
+     "interval90_high_ppb": 12.6,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 12,
-     "target_time_utc": "2026-11-24 01:00",
-     "target_time_local": "2026-11-23 19:00",
-     "no2_ppb": 2.8,
+     "target_time_utc": "2026-11-24 02:00",
+     "target_time_local": "2026-11-23 20:00",
+     "no2_ppb": 2.6,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 15.3,
+     "interval90_high_ppb": 15.0,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 24,
-     "target_time_utc": "2026-11-24 13:00",
-     "target_time_local": "2026-11-24 07:00",
-     "no2_ppb": 3.6,
+     "target_time_utc": "2026-11-24 14:00",
+     "target_time_local": "2026-11-24 08:00",
+     "no2_ppb": 3.0,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 16.4,
+     "interval90_high_ppb": 15.9,
      "aqi_category": "Good"
     }
    ],
@@ -437,45 +437,45 @@
   },
   {
    "station": "29-095-0034-1",
-   "issued_at_utc": "2026-11-23 13:00",
+   "issued_at_utc": "2026-11-23 14:00",
    "utc_offset_h": -6,
-   "last_reading_ppb": 21.3,
+   "last_reading_ppb": 19.3,
    "hours_behind_file_end": 0,
    "forecasts": [
     {
      "horizon_h": 1,
-     "target_time_utc": "2026-11-23 14:00",
-     "target_time_local": "2026-11-23 08:00",
-     "no2_ppb": 17.9,
-     "interval90_low_ppb": 12.6,
-     "interval90_high_ppb": 23.1,
+     "target_time_utc": "2026-11-23 15:00",
+     "target_time_local": "2026-11-23 09:00",
+     "no2_ppb": 16.3,
+     "interval90_low_ppb": 11.0,
+     "interval90_high_ppb": 21.5,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 6,
-     "target_time_utc": "2026-11-23 19:00",
-     "target_time_local": "2026-11-23 13:00",
-     "no2_ppb": 11.8,
-     "interval90_low_ppb": 0.8,
-     "interval90_high_ppb": 22.8,
+     "target_time_utc": "2026-11-23 20:00",
+     "target_time_local": "2026-11-23 14:00",
+     "no2_ppb": 12.3,
+     "interval90_low_ppb": 1.2,
+     "interval90_high_ppb": 23.3,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 12,
-     "target_time_utc": "2026-11-24 01:00",
-     "target_time_local": "2026-11-23 19:00",
-     "no2_ppb": 18.5,
-     "interval90_low_ppb": 6.1,
-     "interval90_high_ppb": 31.0,
+     "target_time_utc": "2026-11-24 02:00",
+     "target_time_local": "2026-11-23 20:00",
+     "no2_ppb": 20.3,
+     "interval90_low_ppb": 7.9,
+     "interval90_high_ppb": 32.8,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 24,
-     "target_time_utc": "2026-11-24 13:00",
-     "target_time_local": "2026-11-24 07:00",
-     "no2_ppb": 20.7,
-     "interval90_low_ppb": 7.8,
-     "interval90_high_ppb": 33.6,
+     "target_time_utc": "2026-11-24 14:00",
+     "target_time_local": "2026-11-24 08:00",
+     "no2_ppb": 19.9,
+     "interval90_low_ppb": 7.0,
+     "interval90_high_ppb": 32.8,
      "aqi_category": "Good"
     }
    ],
@@ -485,45 +485,45 @@
   },
   {
    "station": "29-189-0016-1",
-   "issued_at_utc": "2026-11-23 13:00",
+   "issued_at_utc": "2026-11-23 14:00",
    "utc_offset_h": -6,
-   "last_reading_ppb": 5.1,
+   "last_reading_ppb": 2.3,
    "hours_behind_file_end": 0,
    "forecasts": [
     {
      "horizon_h": 1,
-     "target_time_utc": "2026-11-23 14:00",
-     "target_time_local": "2026-11-23 08:00",
-     "no2_ppb": 4.8,
+     "target_time_utc": "2026-11-23 15:00",
+     "target_time_local": "2026-11-23 09:00",
+     "no2_ppb": 2.2,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 10.0,
+     "interval90_high_ppb": 7.4,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 6,
-     "target_time_utc": "2026-11-23 19:00",
-     "target_time_local": "2026-11-23 13:00",
-     "no2_ppb": 4.4,
+     "target_time_utc": "2026-11-23 20:00",
+     "target_time_local": "2026-11-23 14:00",
+     "no2_ppb": 2.9,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 15.4,
+     "interval90_high_ppb": 13.9,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 12,
-     "target_time_utc": "2026-11-24 01:00",
-     "target_time_local": "2026-11-23 19:00",
-     "no2_ppb": 8.2,
+     "target_time_utc": "2026-11-24 02:00",
+     "target_time_local": "2026-11-23 20:00",
+     "no2_ppb": 7.6,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 20.7,
+     "interval90_high_ppb": 20.1,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 24,
-     "target_time_utc": "2026-11-24 13:00",
-     "target_time_local": "2026-11-24 07:00",
-     "no2_ppb": 16.6,
-     "interval90_low_ppb": 3.7,
-     "interval90_high_ppb": 29.4,
+     "target_time_utc": "2026-11-24 14:00",
+     "target_time_local": "2026-11-24 08:00",
+     "no2_ppb": 13.5,
+     "interval90_low_ppb": 0.6,
+     "interval90_high_ppb": 26.4,
      "aqi_category": "Good"
     }
    ],
@@ -533,45 +533,45 @@
   },
   {
    "station": "29-510-0094-1",
-   "issued_at_utc": "2026-11-23 13:00",
+   "issued_at_utc": "2026-11-23 14:00",
    "utc_offset_h": -6,
-   "last_reading_ppb": 11.2,
+   "last_reading_ppb": 5.5,
    "hours_behind_file_end": 0,
    "forecasts": [
     {
      "horizon_h": 1,
-     "target_time_utc": "2026-11-23 14:00",
-     "target_time_local": "2026-11-23 08:00",
-     "no2_ppb": 10.8,
-     "interval90_low_ppb": 5.5,
-     "interval90_high_ppb": 16.0,
+     "target_time_utc": "2026-11-23 15:00",
+     "target_time_local": "2026-11-23 09:00",
+     "no2_ppb": 5.3,
+     "interval90_low_ppb": 0.1,
+     "interval90_high_ppb": 10.6,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 6,
-     "target_time_utc": "2026-11-23 19:00",
-     "target_time_local": "2026-11-23 13:00",
-     "no2_ppb": 7.3,
+     "target_time_utc": "2026-11-23 20:00",
+     "target_time_local": "2026-11-23 14:00",
+     "no2_ppb": 5.4,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 18.3,
+     "interval90_high_ppb": 16.4,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 12,
-     "target_time_utc": "2026-11-24 01:00",
-     "target_time_local": "2026-11-23 19:00",
-     "no2_ppb": 14.4,
-     "interval90_low_ppb": 1.9,
-     "interval90_high_ppb": 26.8,
+     "target_time_utc": "2026-11-24 02:00",
+     "target_time_local": "2026-11-23 20:00",
+     "no2_ppb": 12.7,
+     "interval90_low_ppb": 0.2,
+     "interval90_high_ppb": 25.2,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 24,
-     "target_time_utc": "2026-11-24 13:00",
-     "target_time_local": "2026-11-24 07:00",
-     "no2_ppb": 14.6,
-     "interval90_low_ppb": 1.7,
-     "interval90_high_ppb": 27.5,
+     "target_time_utc": "2026-11-24 14:00",
+     "target_time_local": "2026-11-24 08:00",
+     "no2_ppb": 12.4,
+     "interval90_low_ppb": 0.0,
+     "interval90_high_ppb": 25.3,
      "aqi_category": "Good"
     }
    ],
@@ -584,7 +584,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -5,
    "last_reading_ppb": 5.0,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -632,7 +632,7 @@
    "issued_at_utc": "2026-11-23 12:00",
    "utc_offset_h": -6,
    "last_reading_ppb": 1.0,
-   "hours_behind_file_end": 1,
+   "hours_behind_file_end": 2,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -680,7 +680,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -7,
    "last_reading_ppb": 0.7,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -728,7 +728,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -7,
    "last_reading_ppb": 0.0,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -776,7 +776,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -6,
    "last_reading_ppb": 0.0,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
@@ -824,7 +824,7 @@
    "issued_at_utc": "2026-11-23 13:00",
    "utc_offset_h": -7,
    "last_reading_ppb": 5.9,
-   "hours_behind_file_end": 0,
+   "hours_behind_file_end": 1,
    "forecasts": [
     {
      "horizon_h": 1,
