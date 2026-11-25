@@ -8,7 +8,7 @@
   "numpy": "2.3.3",
   "pandas": "2.3.2"
  },
- "issued_at_utc": "2026-11-25 22:00",
+ "issued_at_utc": "2026-11-25 23:00",
  "data_as_of_utc": "2026-11-25 21:00",
  "interval": "90% split-conformal",
  "horizons_h": [
@@ -19,15 +19,14 @@
  ],
  "units": "ppb",
  "data_contract": {
-  "now_utc": "2026-11-25 22:00",
-  "rows_in": 1177,
+  "now_utc": "2026-11-25 23:00",
+  "rows_in": 1160,
   "rows_out_of_range": 0,
   "stations_ok": [
    "04-013-3002-6",
    "06-037-0113-1",
    "06-037-2005-1",
    "06-037-4008-1",
-   "06-037-6012-1",
    "06-059-0007-5",
    "06-071-0026-1",
    "20-133-0003-1",
@@ -42,7 +41,9 @@
    "49-013-7011-1"
   ],
   "stations_sparse": [],
-  "stations_stale": [],
+  "stations_stale": [
+   "06-037-6012-1"
+  ],
   "stations_missing": [
    "06-065-5001-2",
    "17-031-0119-1",
@@ -242,54 +243,6 @@
    "place": "Los Angeles, California",
    "lat": 33.859662,
    "lon": -118.200707
-  },
-  {
-   "station": "06-037-6012-1",
-   "issued_at_utc": "2026-11-25 16:00",
-   "utc_offset_h": -8,
-   "last_reading_ppb": 16.2,
-   "hours_behind_file_end": 5,
-   "forecasts": [
-    {
-     "horizon_h": 1,
-     "target_time_utc": "2026-11-25 17:00",
-     "target_time_local": "2026-11-25 09:00",
-     "no2_ppb": 11.6,
-     "interval90_low_ppb": 6.3,
-     "interval90_high_ppb": 16.8,
-     "aqi_category": "Good"
-    },
-    {
-     "horizon_h": 6,
-     "target_time_utc": "2026-11-25 22:00",
-     "target_time_local": "2026-11-25 14:00",
-     "no2_ppb": 7.7,
-     "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 18.7,
-     "aqi_category": "Good"
-    },
-    {
-     "horizon_h": 12,
-     "target_time_utc": "2026-11-26 04:00",
-     "target_time_local": "2026-11-25 20:00",
-     "no2_ppb": 14.6,
-     "interval90_low_ppb": 2.2,
-     "interval90_high_ppb": 27.1,
-     "aqi_category": "Good"
-    },
-    {
-     "horizon_h": 24,
-     "target_time_utc": "2026-11-26 16:00",
-     "target_time_local": "2026-11-26 08:00",
-     "no2_ppb": 15.1,
-     "interval90_low_ppb": 2.2,
-     "interval90_high_ppb": 28.0,
-     "aqi_category": "Good"
-    }
-   ],
-   "place": "Los Angeles, California",
-   "lat": 34.38344,
-   "lon": -118.5284
   },
   {
    "station": "06-059-0007-5",
