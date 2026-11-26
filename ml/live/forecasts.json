@@ -8,7 +8,7 @@
   "numpy": "2.3.3",
   "pandas": "2.3.2"
  },
- "issued_at_utc": "2026-11-26 19:00",
+ "issued_at_utc": "2026-11-26 20:00",
  "data_as_of_utc": "2026-11-26 18:00",
  "interval": "90% split-conformal",
  "horizons_h": [
@@ -19,13 +19,12 @@
  ],
  "units": "ppb",
  "data_contract": {
-  "now_utc": "2026-11-26 19:00",
-  "rows_in": 1180,
+  "now_utc": "2026-11-26 20:00",
+  "rows_in": 1163,
   "rows_out_of_range": 0,
   "stations_ok": [
    "04-013-3002-6",
    "06-037-0113-1",
-   "06-037-2005-1",
    "06-037-4008-1",
    "06-037-6012-1",
    "06-059-0007-5",
@@ -42,7 +41,9 @@
    "49-013-7011-1"
   ],
   "stations_sparse": [],
-  "stations_stale": [],
+  "stations_stale": [
+   "06-037-2005-1"
+  ],
   "stations_missing": [
    "06-065-5001-2",
    "17-031-0119-1",
@@ -146,54 +147,6 @@
    "place": "Los Angeles, California",
    "lat": 34.05111,
    "lon": -118.45636
-  },
-  {
-   "station": "06-037-2005-1",
-   "issued_at_utc": "2026-11-26 13:00",
-   "utc_offset_h": -8,
-   "last_reading_ppb": 20.1,
-   "hours_behind_file_end": 5,
-   "forecasts": [
-    {
-     "horizon_h": 1,
-     "target_time_utc": "2026-11-26 14:00",
-     "target_time_local": "2026-11-26 06:00",
-     "no2_ppb": 25.1,
-     "interval90_low_ppb": 19.8,
-     "interval90_high_ppb": 30.4,
-     "aqi_category": "Good"
-    },
-    {
-     "horizon_h": 6,
-     "target_time_utc": "2026-11-26 19:00",
-     "target_time_local": "2026-11-26 11:00",
-     "no2_ppb": 9.6,
-     "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 20.7,
-     "aqi_category": "Good"
-    },
-    {
-     "horizon_h": 12,
-     "target_time_utc": "2026-11-27 01:00",
-     "target_time_local": "2026-11-26 17:00",
-     "no2_ppb": 23.5,
-     "interval90_low_ppb": 11.1,
-     "interval90_high_ppb": 36.0,
-     "aqi_category": "Good"
-    },
-    {
-     "horizon_h": 24,
-     "target_time_utc": "2026-11-27 13:00",
-     "target_time_local": "2026-11-27 05:00",
-     "no2_ppb": 22.0,
-     "interval90_low_ppb": 9.2,
-     "interval90_high_ppb": 34.9,
-     "aqi_category": "Good"
-    }
-   ],
-   "place": "Los Angeles, California",
-   "lat": 34.1326,
-   "lon": -118.1272
   },
   {
    "station": "06-037-4008-1",
