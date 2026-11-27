@@ -20,7 +20,7 @@
  "units": "ppb",
  "data_contract": {
   "now_utc": "2026-11-27 05:00",
-  "rows_in": 1169,
+  "rows_in": 1170,
   "rows_out_of_range": 0,
   "stations_ok": [
    "04-013-3002-6",
@@ -774,45 +774,45 @@
   },
   {
    "station": "49-013-7011-1",
-   "issued_at_utc": "2026-11-27 03:00",
+   "issued_at_utc": "2026-11-27 04:00",
    "utc_offset_h": -7,
-   "last_reading_ppb": 13.4,
-   "hours_behind_file_end": 1,
+   "last_reading_ppb": 12.0,
+   "hours_behind_file_end": 0,
    "forecasts": [
     {
      "horizon_h": 1,
-     "target_time_utc": "2026-11-27 04:00",
-     "target_time_local": "2026-11-26 21:00",
-     "no2_ppb": 13.5,
-     "interval90_low_ppb": 8.2,
-     "interval90_high_ppb": 18.8,
+     "target_time_utc": "2026-11-27 05:00",
+     "target_time_local": "2026-11-26 22:00",
+     "no2_ppb": 11.8,
+     "interval90_low_ppb": 6.6,
+     "interval90_high_ppb": 17.1,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 6,
-     "target_time_utc": "2026-11-27 09:00",
-     "target_time_local": "2026-11-27 02:00",
-     "no2_ppb": 9.2,
+     "target_time_utc": "2026-11-27 10:00",
+     "target_time_local": "2026-11-27 03:00",
+     "no2_ppb": 9.3,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 20.2,
+     "interval90_high_ppb": 20.3,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 12,
-     "target_time_utc": "2026-11-27 15:00",
-     "target_time_local": "2026-11-27 08:00",
-     "no2_ppb": 10.0,
+     "target_time_utc": "2026-11-27 16:00",
+     "target_time_local": "2026-11-27 09:00",
+     "no2_ppb": 10.3,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 22.5,
+     "interval90_high_ppb": 22.8,
      "aqi_category": "Good"
     },
     {
      "horizon_h": 24,
-     "target_time_utc": "2026-11-28 03:00",
-     "target_time_local": "2026-11-27 20:00",
-     "no2_ppb": 10.1,
+     "target_time_utc": "2026-11-28 04:00",
+     "target_time_local": "2026-11-27 21:00",
+     "no2_ppb": 9.9,
      "interval90_low_ppb": 0.0,
-     "interval90_high_ppb": 23.0,
+     "interval90_high_ppb": 22.8,
      "aqi_category": "Good"
     }
    ],
